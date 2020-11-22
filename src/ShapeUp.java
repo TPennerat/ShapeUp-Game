@@ -17,8 +17,10 @@ public class ShapeUp {
 
     public static void main(String[] args) {
         System.out.println("Bienvenue dans ShapeUp !"); // salutation du joueur
+        System.out.println("Préparation du paquet de cartes...");
         Queue<Card> cards = createCards();
-        List<Player> players = askPlayersInfo(cards);
+        System.out.println("Paquet de cartes prêt.");
+        List<Player> players = askPlayersInfo();
         AbstractBoard board = askBoardInfo();
         Set<Rule> rules = askRulesInfo();
         ShapeUp game = new ShapeUp(players, board, rules, cards);
@@ -26,6 +28,56 @@ public class ShapeUp {
     }
 
     private void startGame() {
+        Iterator<Player> ip = playerList.iterator();
+        Scanner sc = new Scanner(System.in);
+        int i = 1;
+        Player p;
+        while (ip.hasNext()) {
+            p = ip.next();
+            if (p instanceof RealPlayer) {
+                System.out.println("Carte de victoire du joueur n°" + i + " (appuie sur entrée pour decouvrir)");
+                sc.nextLine();
+                Card pc = deck.remove();
+                p.setVictoryCard(pc);
+                System.out.println(pc.toString());
+                i++;
+            } else {
+                p.setVictoryCard(deck.remove());
+            }
+        }
+        while (isGameFinished()) {
+            startRound();
+        }
+
+    }
+
+    private boolean isGameFinished() {
+        if (playerList.size() == 2) {
+            return deck.size() == 0;
+        } else {
+            return deck.size() == 1;
+        }
+    }
+
+    private void startRound() {
+        for (Player p:
+             playerList) {
+            if (p instanceof RealPlayer) {
+                if (isFirstTurn) {
+                    p.play();
+                } else {
+                    int res = p.askChoice();
+                    if (res == 1) {
+                        p.play();
+                    } else {
+                        p.move(); //TODO implement method
+                        p.play();
+                    }
+                }
+            } else {
+                // TODO turn for virutal player
+            }
+        }
     }
 
     private static Queue<Card> createCards() {
@@ -84,7 +136,7 @@ public class ShapeUp {
         return ab;
     }
 
-    private static String askString(String s) {
+    public static String askString(String s) {
         System.out.println(s);
         Scanner sc = new Scanner(System.in);
         String res;
@@ -98,7 +150,7 @@ public class ShapeUp {
         return res;
     }
 
-    private static int askNumber(String message) {
+    public static int askNumber(String message) {
         System.out.println(message);
         Scanner sc = new Scanner(System.in);
         int res;
@@ -113,7 +165,7 @@ public class ShapeUp {
         return res;
     }
 
-    private static List<Player> askPlayersInfo(Queue<Card> c) {
+    private static List<Player> askPlayersInfo() {
         // demande le nombre de joueur à l'utilisateur
         String messagePlayer = "À combien de joueur souhaites-tu jouer ?";
         int nbPlayer = askNumber(messagePlayer);
@@ -133,11 +185,11 @@ public class ShapeUp {
         List<Player> players = new LinkedList<>();
         for (int i=0; i<nbRealPlayer; i++) {
             playerName = askString("Comment s'appelle le joueur "+(i+1)+" ?");
-            players.add(new RealPlayer(playerName, c.remove()));
+            players.add(new RealPlayer(playerName));
         }
         for (int i=0; i<nbVirtualPlayer; i++) {
             playerName = "Robot "+(i+1);
-            players.add(new VirtualPlayer(playerName, c.remove()));
+            players.add(new VirtualPlayer(playerName));
         }
         return players;
     }

@@ -1,10 +1,11 @@
+import java.util.Scanner;
+
 public abstract class Player {
     protected String pseudo;
     protected Card victoryCard;
 
-    public Player(String pseudo, Card victoryCard) {
+    public Player(String pseudo) {
         this.pseudo = pseudo;
-        this.victoryCard = victoryCard;
     }
 
     public String getPseudo() {
@@ -21,6 +22,21 @@ public abstract class Player {
 
     public void setVictoryCard(Card victoryCard) {
         this.victoryCard = victoryCard;
+    }
+
+    public abstract void play();
+
+    public abstract void move();
+
+    public int askChoice() {
+        Scanner sc = new Scanner(System.in);
+        String messageChoice = "Que voulez-vous faire en premier ? (1 : placer; 2 : bouger)";
+        int choiceNumber = ShapeUp.askNumber(messageChoice);
+        while (choiceNumber > 2 || choiceNumber < 1) {
+            System.err.println("Le chiffre de l'action doit être 1 ou 2.");
+            choiceNumber = ShapeUp.askNumber(messageChoice);
+        }
+        return choiceNumber;
     }
 
     @Override
