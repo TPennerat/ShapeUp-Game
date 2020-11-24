@@ -39,7 +39,7 @@ public class ShapeUp {
                 sc.nextLine();
                 Card pc = deck.remove();
                 p.setVictoryCard(pc);
-                System.out.println(pc.toString());
+                System.out.println(pc.toASCIIArt());
                 i++;
             } else {
                 p.setVictoryCard(deck.remove());
@@ -82,12 +82,12 @@ public class ShapeUp {
 
     private static Queue<Card> createCards() {
         List<Card> shuffleCardList = new ArrayList<>();
-        shuffleCardList.add(new Card(Color.RED, Shape.RECTANGLE, false));
-        shuffleCardList.add(new Card(Color.BLUE, Shape.RECTANGLE, false));
-        shuffleCardList.add(new Card(Color.GREEN, Shape.RECTANGLE, false));
-        shuffleCardList.add(new Card(Color.RED, Shape.RECTANGLE, true));
-        shuffleCardList.add(new Card(Color.BLUE, Shape.RECTANGLE, true));
-        shuffleCardList.add(new Card(Color.GREEN, Shape.RECTANGLE, true));
+        shuffleCardList.add(new Card(Color.RED, Shape.SQUARE, false));
+        shuffleCardList.add(new Card(Color.BLUE, Shape.SQUARE, false));
+        shuffleCardList.add(new Card(Color.GREEN, Shape.SQUARE, false));
+        shuffleCardList.add(new Card(Color.RED, Shape.SQUARE, true));
+        shuffleCardList.add(new Card(Color.BLUE, Shape.SQUARE, true));
+        shuffleCardList.add(new Card(Color.GREEN, Shape.SQUARE, true));
 
         shuffleCardList.add(new Card(Color.RED, Shape.TRIANGLE, false));
         shuffleCardList.add(new Card(Color.BLUE, Shape.TRIANGLE, false));

@@ -4,4 +4,14 @@ public class VirtualPlayer extends Player {
     public VirtualPlayer(String pseudo) {
         super(pseudo);
     }
+
+    @Override
+    public void play() {
+
+    }
+
+    @Override
+    public void move() {
+
+    }
 }
