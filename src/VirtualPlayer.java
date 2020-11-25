@@ -6,12 +6,12 @@ public class VirtualPlayer extends Player {
     }
 
     @Override
-    public void play() {
-
+    public Coord play() {
+        return null;
     }
 
     @Override
-    public void move() {
-
+    public Coord move() {
+        return null;
     }
 }

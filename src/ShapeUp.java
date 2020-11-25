@@ -35,7 +35,7 @@ public class ShapeUp {
         while (ip.hasNext()) {
             p = ip.next();
             if (p instanceof RealPlayer) {
-                System.out.println("Carte de victoire du joueur n°" + i + " (appuie sur entrée pour decouvrir)");
+                System.out.print("Carte de victoire du joueur n°" + i + " (appuie sur entrée pour decouvrir)");
                 sc.nextLine();
                 Card pc = deck.remove();
                 p.setVictoryCard(pc);
@@ -45,7 +45,7 @@ public class ShapeUp {
                 p.setVictoryCard(deck.remove());
             }
         }
-        while (isGameFinished()) {
+        while (!isGameFinished()) {
             startRound();
         }
 
@@ -62,21 +62,32 @@ public class ShapeUp {
     private void startRound() {
         for (Player p:
              playerList) {
-            if (p instanceof RealPlayer) {
-                if (isFirstTurn) {
+            System.out.println("A vous de jouez "+p.getPseudo());
+            startPlayerTurn(p);
+            board.showBoard();
+        }
+    }
+
+    private void startPlayerTurn(Player p) {
+        Card card = deck.remove();
+        System.out.println("Carte à placer :");
+        System.out.println(card.toASCIIArt());
+        if (p instanceof RealPlayer) {
+            if (isFirstTurn) {
+                Coord c = p.play();
+                board.placeCard(card, c);
+                isFirstTurn = false;
+            } else {
+                int res = p.askChoice();
+                if (res == 1) {
                     p.play();
                 } else {
-                    int res = p.askChoice();
-                    if (res == 1) {
-                        p.play();
-                    } else {
-                        p.move(); //TODO implement method
-                        p.play();
-                    }
+                    p.move(); //TODO implement method
+                    p.play();
                 }
-            } else {
-                // TODO turn for virutal player
             }
+        } else {
+            // TODO turn for virutal player
         }
     }
 

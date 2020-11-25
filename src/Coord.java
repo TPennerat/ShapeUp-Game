@@ -1,5 +1,6 @@
 /**
  * Classe qui définit les coordonnées d'une carte à travers une Map
+ *
  * @see AbstractBoard
  */
 public class Coord {
@@ -8,6 +9,7 @@ public class Coord {
 
     /**
      * Constructeur de la classe Coord
+     *
      * @param x entier sur l'axe x
      * @param y entier sur l'axe y
      */
@@ -18,6 +20,7 @@ public class Coord {
 
     /**
      * getter de l'attribut posX
+     *
      * @return l'attribut posX
      */
     public int getPosX() {
@@ -26,6 +29,7 @@ public class Coord {
 
     /**
      * setter de l'attribut posX
+     *
      * @param posX l'entier qui va remplacer posX
      */
     public void setPosX(int posX) {
@@ -34,6 +38,7 @@ public class Coord {
 
     /**
      * getter de l'attribut posY
+     *
      * @return l'attribut posY
      */
     public int getPosY() {
@@ -42,9 +47,17 @@ public class Coord {
 
     /**
      * setter de l'attribut posY
+     *
      * @param posY l'entier qui va remplacer posY
      */
     public void setPosY(int posY) {
         this.posY = posY;
+    }
+
+    public boolean isCoordAdjacent(Coord c) {
+        int x = c.getPosX();
+        int y = c.getPosY();
+        // TODO
+        return false;
     }
 }

@@ -64,10 +64,8 @@ public class Card {
                 s = null;
                 break;
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append(colorize("[",c));
-        sb.append(colorize(s,c));
-        sb.append(colorize("]",c));
-        return sb.toString();
+        return colorize("[", c) +
+                colorize(s, c) +
+                colorize("]", c);
     }
 }
