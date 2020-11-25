@@ -1,9 +1,11 @@
+import java.util.Objects;
+
 /**
  * Classe qui définit les coordonnées d'une carte à travers une Map
  *
  * @see AbstractBoard
  */
-public class Coord {
+public class Coord implements Comparable{
     private int posX;
     private int posY;
 
@@ -58,20 +60,52 @@ public class Coord {
         int x = c.getPosX();
         int y = c.getPosY();
         
-		int soustracX = int x - this.posX;
-		int soustracY = int y - this.posY;
+		int soustracX =  x - this.posX;
+		int soustracY =  y - this.posY;
 		
-		if ((soustracX == 0 && sosutracY == 1) || 
-			(soustracX == 1 && sosutracY == 0) ||
-			(soustracX == -1 && sosutracY == 0) ||
-			(soustracX == 0 && sosutracY == -1)) {
+		if ((soustracX == 0 && soustracY == 1) ||
+			(soustracX == 1 && soustracY == 0) ||
+			(soustracX == -1 && soustracY == 0) ||
+			(soustracX == 0 && soustracY == -1)) {
 			
-			return true
+			return true;
 		}
 		else {
 			return false;
 		}
 		
         
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Coord)) return false;
+        Coord coord = (Coord) o;
+        return posX == coord.posX &&
+                posY == coord.posY;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(posX, posY);
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Coord c = (Coord) o;
+        int x = c.getPosX();
+        int y = c.getPosY();
+
+        int soustracX =  x - this.posX;
+        int soustracY =  y - this.posY;
+        if ((soustracX == 0 && soustracY == 1) || (soustracX == 1 && soustracY == 0)) {
+            return 1;
+        } else if ((soustracX == -1 && soustracY == 0) ||
+                (soustracX == 0 && soustracY == -1)){
+            return -1;
+        } else {
+            return 0;
+        }
     }
 }

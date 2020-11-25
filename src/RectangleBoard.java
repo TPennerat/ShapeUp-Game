@@ -1,15 +1,15 @@
-import java.util.Iterator;
+import java.util.*;
 
 public class RectangleBoard extends AbstractBoard {
 
     @Override
     public boolean isCardCorrectlyPlaced(Coord c) {
-        return isAtLeastOneAdjacentCard(c);
+        return isAtLeastOneAdjacentCard(c) && !isCoordAlreadyExisting(c);
     }
 
     @Override
     protected boolean isAtLeastOneAdjacentCard(Coord c) {
-        Iterator<Coord> i = placedCards.values().iterator();
+        Iterator<Coord> i = placedCards.keySet().iterator();
         boolean isAtLeastOneAdjacentCard = false;
         while (i.hasNext()) {
             Coord coord = i.next();
@@ -22,6 +22,12 @@ public class RectangleBoard extends AbstractBoard {
 
     @Override
     public void showBoard() {
-        placedCards.forEach((k, v) -> System.out.println(k.toASCIIArt()));
+        Set<Coord> s = placedCards.keySet();
+        List<Coord> l = new ArrayList<>(s);
+        l.sort(null);
+        for (Coord c:
+             l) {
+            System.out.println(placedCards.get(c).toASCIIArt());
+        }
     }
 }

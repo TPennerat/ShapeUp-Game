@@ -5,6 +5,7 @@ public class ShapeUp {
     private AbstractBoard board;
     private Set<Rule> rules;
     private Queue<Card> deck;
+    private boolean isFirstRound;
     private boolean isFirstTurn;
 
     public ShapeUp(List<Player> players, AbstractBoard board, Set<Rule> rules, Queue<Card> deck) {
@@ -12,6 +13,7 @@ public class ShapeUp {
         this.board = board;
         this.rules = rules;
         this.deck = deck;
+        isFirstRound = true;
         isFirstTurn = true;
     }
 
@@ -45,6 +47,8 @@ public class ShapeUp {
                 p.setVictoryCard(deck.remove());
             }
         }
+        startRound();
+        isFirstRound = false;
         while (!isGameFinished()) {
             startRound();
         }
@@ -62,7 +66,7 @@ public class ShapeUp {
     private void startRound() {
         for (Player p:
              playerList) {
-            System.out.println("A vous de jouez "+p.getPseudo());
+            System.out.println("\nA vous de jouer "+p.getPseudo());
             startPlayerTurn(p);
             board.showBoard();
         }
@@ -73,16 +77,30 @@ public class ShapeUp {
         System.out.println("Carte à placer :");
         System.out.println(card.toASCIIArt());
         if (p instanceof RealPlayer) {
-            if (isFirstTurn) {
+            if (isFirstRound) {
                 Coord c = p.play();
-                board.placeCard(card, c);
-                isFirstTurn = false;
+                if (isFirstTurn) {
+                    isFirstTurn = false;
+                } else {
+                    while (!board.isCardCorrectlyPlaced(c)) {
+                        System.out.println("Carte mal placée.");
+                        c = p.play();
+                    }
+                }
+                board.placeCard(c,card);
             } else {
                 int res = p.askChoice();
                 if (res == 1) {
-                    p.play();
+                    Coord c = p.play();
+                    while (!board.isCardCorrectlyPlaced(c)) {
+                        System.out.println("Carte mal placée.");
+                        c = p.play();
+                    }
+                    if (p.askMoveChoice() == 1) {
+                        p.move();
+                    }
                 } else {
-                    p.move(); //TODO implement method
+                    p.move();
                     p.play();
                 }
             }

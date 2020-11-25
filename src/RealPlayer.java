@@ -20,6 +20,12 @@ public class RealPlayer extends Player {
 
     @Override
     public Coord move() {
-        return null;
+        Integer x = askOneCoord("x");
+        Integer y = askOneCoord("y");
+        while (x == null || y == null)  {
+            x = askOneCoord("x");
+            y = askOneCoord("y");
+        }
+        return new Coord(x,y);
     }
 }

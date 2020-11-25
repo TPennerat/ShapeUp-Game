@@ -3,7 +3,7 @@ import java.util.Map;
 
 public abstract class AbstractBoard {
 
-    protected Map<Card, Coord> placedCards;
+    protected Map<Coord, Card> placedCards;
 
     public AbstractBoard() {
         placedCards = new HashMap<>();
@@ -11,8 +11,17 @@ public abstract class AbstractBoard {
 
     public abstract boolean isCardCorrectlyPlaced(Coord c);
 
-    public void placeCard(Card card, Coord coord) {
-        placedCards.put(card, coord);
+    protected boolean isCoordAlreadyExisting(Coord c) {
+        for (Coord coord:
+             placedCards.keySet()) {
+            if (coord.equals(c))
+                return true;
+        }
+        return false;
+    }
+
+    public void placeCard(Coord coord, Card card) {
+        placedCards.put(coord, card);
     }
 
     protected abstract boolean isAtLeastOneAdjacentCard(Coord c);

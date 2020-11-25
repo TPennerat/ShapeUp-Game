@@ -62,4 +62,15 @@ public abstract class Player {
                 ", victoryCard=" + victoryCard +
                 '}';
     }
+
+    public int askMoveChoice() {
+        Scanner sc = new Scanner(System.in);
+        String messageChoice = "Souhaitez-vous déplacer une carte ? (1 : oui; 2 : non)";
+        int choiceNumber = ShapeUp.askNumber(messageChoice);
+        while (choiceNumber > 2 || choiceNumber < 1) {
+            System.err.println("Le chiffre de l'action doit être 1 ou 2.");
+            choiceNumber = ShapeUp.askNumber(messageChoice);
+        }
+        return choiceNumber;
+    }
 }
