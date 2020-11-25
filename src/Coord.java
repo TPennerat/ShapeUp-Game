@@ -57,7 +57,21 @@ public class Coord {
     public boolean isCoordAdjacent(Coord c) {
         int x = c.getPosX();
         int y = c.getPosY();
-        // TODO
-        return false;
+        
+		int soustracX = int x - this.posX;
+		int soustracY = int y - this.posY;
+		
+		if ((soustracX == 0 && sosutracY == 1) || 
+			(soustracX == 1 && sosutracY == 0) ||
+			(soustracX == -1 && sosutracY == 0) ||
+			(soustracX == 0 && sosutracY == -1)) {
+			
+			return true
+		}
+		else {
+			return false;
+		}
+		
+        
     }
 }
