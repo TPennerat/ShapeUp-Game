@@ -218,7 +218,7 @@ public class ShapeUp {
         }
         for (int i=0; i<nbVirtualPlayer; i++) {
             playerName = "Robot "+(i+1);
-            players.add(new VirtualPlayer(playerName));
+            players.add(new VirtualPlayer(playerName, new PlayingStrategy1())); //TODO demander difficulté
         }
         return players;
     }

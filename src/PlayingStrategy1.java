@@ -1,7 +1,7 @@
 public class PlayingStrategy1 implements PlayingStrategy {
 	
 	@Override
-	public Coord playVirtual() {
+	public Coord play() {
         int Min = -10;
 		int Max = 10;
 		
@@ -12,7 +12,7 @@ public class PlayingStrategy1 implements PlayingStrategy {
     }
 	
 	@Override
-	public Coord moveVirtual() {
+	public Coord move() {
         
 		
 		
