@@ -31,52 +31,86 @@ public abstract class AbstractBoard {
         System.out.print("     ");
     }
 
-    public int getMinimunX() {
+    public int getRealMinimunX() {
         List<Coord> l = toList();
-        int minX = l.get(0).getPosX();
-        for (Coord c:
-             l) {
-            if (minX > c.getPosX())
-                minX = c.getPosX();
+        if (l.size() != 0) {
+            int minX = l.get(0).getPosX();
+            for (Coord c :
+                    l) {
+                if (minX > c.getPosX())
+                    minX = c.getPosX();
+            }
+            return minX;
+        } else {
+            return 1;
         }
-        return minX;
     }
 
-    public int getMinimunY() {
+    public int getRealMinimumY() {
         List<Coord> l = toList();
-        int minY = l.get(0).getPosY();
-        for (Coord c:
-                l) {
-            if (minY > c.getPosX())
-                minY = c.getPosX();
+        if (l.size() != 0) {
+            int minY = l.get(0).getPosY();
+            for (Coord c :
+                    l) {
+                if (minY > c.getPosY())
+                    minY = c.getPosY();
+            }
+            return minY;
+        } else {
+            return 1;
         }
-        return minY;
     }
 
-    public int getMaximumX() {
+    public int getRealMaximumX() {
         List<Coord> l = toList();
-        int maxX = l.get(0).getPosX();
-        for (Coord c:
-                l) {
-            if (maxX < c.getPosX())
-                maxX = c.getPosX();
+        if (l.size() != 0) {
+            int maxX = l.get(0).getPosX();
+            for (Coord c :
+                    l) {
+                if (maxX < c.getPosX())
+                    maxX = c.getPosX();
+            }
+            return maxX;
+        } else {
+            return -1;
         }
-        return maxX;
     }
 
-    public int getMaximumY() {
+    public int getRealMaximumY() {
         List<Coord> l = toList();
-        int maxY = l.get(0).getPosX();
-        for (Coord c:
-                l) {
-            if (maxY < c.getPosX())
-                maxY = c.getPosX();
+        if (l.size() != 0) {
+            int maxY = l.get(0).getPosY();
+            for (Coord c :
+                    l) {
+                if (maxY < c.getPosY())
+                    maxY = c.getPosY();
+            }
+            return maxY;
+        } else {
+            return -1;
         }
-        return maxY;
     }
 
     private List<Coord> toList() {
         Set<Coord> s = placedCards.keySet();
         return new ArrayList<>(s);
+    }
+
+    public abstract int getPotentialMinimumX();
+
+    public abstract int getPotentialMinimumY();
+
+    public abstract int getPotentialMaximumX();
+
+    public abstract int getPotentialMaximumY();
+
+    public void moveCard(Coord nouvelleCoord, Card aDeplacer) {
+        placeCard(nouvelleCoord, aDeplacer);
+    }
+
+    public Card removeCard(Coord coord) {
+        Card aPlacer = placedCards.get(coord);
+        placedCards.remove(coord);
+        return aPlacer;
     }
 }

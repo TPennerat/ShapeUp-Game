@@ -2,8 +2,12 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public abstract class Player {
+
     protected String pseudo;
     protected Card victoryCard;
+
+    public final static int CARD_DEPLACEMENT = 1;
+    public final static int CARD_CHOSING = 2;
 
     public Player(String pseudo) {
         this.pseudo = pseudo;
@@ -25,24 +29,9 @@ public abstract class Player {
         this.victoryCard = victoryCard;
     }
 
-    public abstract Coord play();
+    public abstract Coord play(int minX, int minY, int maxX, int maxY);
 
-    public abstract Coord move();
-
-    protected Integer askOneCoord(String axis) {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Position sur l'axe "+axis+" :");
-        Integer res;
-        try {
-            res = sc.nextInt();
-        } catch (InputMismatchException ime) {
-            System.err.println("Attention, ton nombre n'est pas un entier.");
-            sc.nextLine();
-            res = null;
-        }
-        sc.nextLine();
-        return res;
-    };
+    public abstract Coord move(int minX, int minY, int maxX, int maxY, int choice);
 
     public int askChoice() {
         Scanner sc = new Scanner(System.in);
