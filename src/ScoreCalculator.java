@@ -9,7 +9,7 @@ public class ScoreCalculator implements InterfaceVisitor {
 		boolean victoryfilled = victorycard.isFilled();
 
 		//Parcourir plateau et voir pour toutes les cartes adjacentes si elles ont des caractéristiques communes
-		for (Card card : placedCards) { 
+		/*for (Card card : placedCards) {
 			
 			Color cardcolor = card.getColor(); 
 			Shape cardshape = card.getShape();
@@ -27,10 +27,10 @@ public class ScoreCalculator implements InterfaceVisitor {
 				}
 			}
 
-		}
+		}*/
 
 
-		
+		return 0;
 	}
 	
 }

@@ -11,10 +11,10 @@ public class PlayingStrategy1 implements PlayingStrategy {
 	
 	@Override
 	public Coord move(int minX, int minY, int maxX, int maxY) {
-        
-		
-		
-		return null;
+		int randomX = minX + (int)(Math.random() * ((maxX - minX) + 1));
+		int randomY = minY + (int)(Math.random() * ((maxY - minY) + 1));
+
+		return new Coord(randomX,randomY);
     }
 
 	@Override
