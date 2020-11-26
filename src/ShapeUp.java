@@ -1,3 +1,5 @@
+import jdk.swing.interop.SwingInterOpUtils;
+
 import java.util.*;
 
 public class ShapeUp {
@@ -70,6 +72,24 @@ public class ShapeUp {
             startPlayerTurn(p);
             System.out.println("\nPlateau de jeu :\n");
             board.showBoard();
+            System.out.print('\n');
+        }
+    }
+
+    private Coord play(Player p) {
+        return p.play(board.getPotentialMinimumX(), board.getPotentialMinimumY(), board.getPotentialMaximumX(),
+                board.getPotentialMaximumY());
+    }
+
+    private Coord move(Player p, int action) {
+        if (action == Player.CARD_CHOSING) {
+            return p.move(board.getRealMinimunX(), board.getRealMinimumY(), board.getRealMaximumX(),
+                    board.getRealMaximumY(), action);
+        } else if (action == Player.CARD_DEPLACEMENT) {
+            return p.move(board.getPotentialMinimumX(), board.getPotentialMinimumY(), board.getPotentialMaximumX(),
+                    board.getPotentialMaximumY(), action);
+        } else {
+            return null;
         }
     }
 
@@ -77,34 +97,57 @@ public class ShapeUp {
         Card card = deck.remove();
         System.out.println("Carte à placer :");
         System.out.println(card.toASCIIArt());
+        Coord c;
         if (isFirstRound) {
-            Coord c = p.play();
+            c = play(p);
             if (isFirstTurn) {
                 isFirstTurn = false;
             } else {
                 while (!board.isCardCorrectlyPlaced(c)) {
-                    System.out.println("Carte mal placée.");
-                    c = p.play();
+                    System.err.println("Carte mal placée.");
+                    c = play(p);
                 }
             }
             board.placeCard(c, card);
         } else {
             int res = p.askChoice();
             if (res == 1) {
-                Coord c = p.play();
-                while (!board.isCardCorrectlyPlaced(c)) {
-                    System.out.println("Carte mal placée.");
-                    c = p.play();
-                }
-                board.placeCard(c, card);
+                playTurn(p, card);
                 if (p.askMoveChoice() == 1) {
-                    p.move();
+                    moveTurn(p);
                 }
             } else {
-                p.move();
-                p.play();
+                moveTurn(p);
+
+                System.out.println("Placer maintenant la carte :");
+                System.out.println(card.toASCIIArt());
+                playTurn(p, card);
             }
         }
+    }
+
+    private void moveTurn(Player p) {
+        Coord c = move(p, Player.CARD_CHOSING);
+        while (!board.isCoordAlreadyExisting(c)) {
+            System.err.println("Aucune carte ici.");
+            c = move(p, Player.CARD_CHOSING);
+        }
+        Card aPlacer = board.removeCard(c);
+        c = move(p, Player.CARD_DEPLACEMENT);
+        while (board.isCoordAlreadyExisting(c) || !board.isCardCorrectlyPlaced(c)) {
+            System.err.println("Carte implacable ici.");
+            c = move(p, Player.CARD_DEPLACEMENT);
+        }
+        board.placeCard(c, aPlacer);
+    }
+
+    private void playTurn(Player p, Card card) {
+        Coord c = play(p);
+        while (!board.isCardCorrectlyPlaced(c)) {
+            System.err.println("Carte mal placée.");
+            c = play(p);
+        }
+        board.placeCard(c, card);
     }
 
     private static Queue<Card> createCards() {

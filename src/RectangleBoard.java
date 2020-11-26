@@ -33,9 +33,9 @@ public class RectangleBoard extends AbstractBoard {
             if (lastY != y) {
                 System.out.print('\n');
             }
-            if (x != getMinimunX()) {
+            if (x != getRealMinimunX()) {
                 if (lastY != y) {
-                    for (int i = getMinimunX(); i < x; i++) {
+                    for (int i = getRealMinimunX(); i < x; i++) {
                         printSpace();
                     }
                 } else {
@@ -56,5 +56,33 @@ public class RectangleBoard extends AbstractBoard {
             lastX = x;
             lastY = y;
         }
+    }
+
+    @Override
+    public int getPotentialMinimumX() {
+        if (getRealMaximumX()-getRealMinimunX() == 4)
+            return getRealMinimunX();
+        return getRealMinimunX() - 1;
+    }
+
+    @Override
+    public int getPotentialMinimumY() {
+        if (getRealMaximumY()- getRealMinimumY() == 2)
+            return getRealMinimumY();
+        return getRealMinimumY() - 1;
+    }
+
+    @Override
+    public int getPotentialMaximumX() {
+        if (getRealMaximumX()-getRealMinimunX() == 4)
+            return getRealMaximumX();
+        return getRealMaximumX() + 1;
+    }
+
+    @Override
+    public int getPotentialMaximumY() {
+        if (getRealMaximumY() - getRealMinimumY() == 2)
+            return getRealMaximumY();
+        return getRealMaximumY() + 1;
     }
 }

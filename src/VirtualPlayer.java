@@ -7,22 +7,22 @@ public class VirtualPlayer extends Player {
     }
 
     @Override
-    public Coord play() {
-       return playingStrategy.play();
+    public Coord play(int minX, int minY, int maxX, int maxY) {
+        return playingStrategy.play(minX, minY, maxX, maxY);
     }
 
     @Override
-    public Coord move() {
-        return playingStrategy.move();
+    public Coord move(int minX, int minY, int maxX, int maxY, int choice) {
+        return playingStrategy.move(minX, minY, maxX, maxY);
     }
 
     @Override
     public int askChoice() {
-        return 1; // TODO random
+        return playingStrategy.askChoice();
     }
 
     @Override
     public int askMoveChoice() {
-        return 2; // TODO random
+        return playingStrategy.askMoveChoice();
     }
 }
