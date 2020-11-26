@@ -64,10 +64,11 @@ public class ShapeUp {
     }
 
     private void startRound() {
-        for (Player p:
-             playerList) {
-            System.out.println("\nA vous de jouer "+p.getPseudo());
+        for (Player p :
+                playerList) {
+            System.out.println("\nA vous de jouer " + p.getPseudo());
             startPlayerTurn(p);
+            System.out.println("\nPlateau de jeu :\n");
             board.showBoard();
         }
     }
@@ -76,36 +77,33 @@ public class ShapeUp {
         Card card = deck.remove();
         System.out.println("Carte à placer :");
         System.out.println(card.toASCIIArt());
-        if (p instanceof RealPlayer) {
-            if (isFirstRound) {
-                Coord c = p.play();
-                if (isFirstTurn) {
-                    isFirstTurn = false;
-                } else {
-                    while (!board.isCardCorrectlyPlaced(c)) {
-                        System.out.println("Carte mal placée.");
-                        c = p.play();
-                    }
-                }
-                board.placeCard(c,card);
+        if (isFirstRound) {
+            Coord c = p.play();
+            if (isFirstTurn) {
+                isFirstTurn = false;
             } else {
-                int res = p.askChoice();
-                if (res == 1) {
-                    Coord c = p.play();
-                    while (!board.isCardCorrectlyPlaced(c)) {
-                        System.out.println("Carte mal placée.");
-                        c = p.play();
-                    }
-                    if (p.askMoveChoice() == 1) {
-                        p.move();
-                    }
-                } else {
-                    p.move();
-                    p.play();
+                while (!board.isCardCorrectlyPlaced(c)) {
+                    System.out.println("Carte mal placée.");
+                    c = p.play();
                 }
             }
+            board.placeCard(c, card);
         } else {
-            // TODO turn for virutal player
+            int res = p.askChoice();
+            if (res == 1) {
+                Coord c = p.play();
+                while (!board.isCardCorrectlyPlaced(c)) {
+                    System.out.println("Carte mal placée.");
+                    c = p.play();
+                }
+                board.placeCard(c, card);
+                if (p.askMoveChoice() == 1) {
+                    p.move();
+                }
+            } else {
+                p.move();
+                p.play();
+            }
         }
     }
 
@@ -212,12 +210,12 @@ public class ShapeUp {
         int nbVirtualPlayer = nbPlayer - nbRealPlayer;
         String playerName;
         List<Player> players = new LinkedList<>();
-        for (int i=0; i<nbRealPlayer; i++) {
-            playerName = askString("Comment s'appelle le joueur "+(i+1)+" ?");
+        for (int i = 0; i < nbRealPlayer; i++) {
+            playerName = askString("Comment s'appelle le joueur " + (i + 1) + " ?");
             players.add(new RealPlayer(playerName));
         }
-        for (int i=0; i<nbVirtualPlayer; i++) {
-            playerName = "Robot "+(i+1);
+        for (int i = 0; i < nbVirtualPlayer; i++) {
+            playerName = "Robot " + (i + 1);
             players.add(new VirtualPlayer(playerName, new PlayingStrategy1())); //TODO demander difficulté
         }
         return players;

@@ -68,4 +68,16 @@ public class Card {
                 colorize(s, c) +
                 colorize("]", c);
     }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public Shape getShape() {
+        return shape;
+    }
+
+    public boolean isFilled() {
+        return filled;
+    }
 }

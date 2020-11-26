@@ -15,4 +15,14 @@ public class VirtualPlayer extends Player {
     public Coord move() {
         return playingStrategy.move();
     }
+
+    @Override
+    public int askChoice() {
+        return 1; // TODO random
+    }
+
+    @Override
+    public int askMoveChoice() {
+        return 2; // TODO random
+    }
 }

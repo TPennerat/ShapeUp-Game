@@ -24,10 +24,37 @@ public class RectangleBoard extends AbstractBoard {
     public void showBoard() {
         Set<Coord> s = placedCards.keySet();
         List<Coord> l = new ArrayList<>(s);
-        l.sort(null);
+        l.sort(Coord::compareTo);
+        int x, y, lastX = l.get(0).getPosX(), lastY = l.get(0).getPosY();
         for (Coord c:
              l) {
-            System.out.println(placedCards.get(c).toASCIIArt());
+            x = c.getPosX();
+            y = c.getPosY();
+            if (lastY != y) {
+                System.out.print('\n');
+            }
+            if (x != getMinimunX()) {
+                if (lastY != y) {
+                    for (int i = getMinimunX(); i < x; i++) {
+                        printSpace();
+                    }
+                } else {
+                    if (x - lastX != 1) {
+                        for (int i = lastX; i < x; i++) {
+                            printSpace();
+                        }
+                    }
+                }
+            }
+            Card card = placedCards.get(c);
+            System.out.print(card.toASCIIArt());
+            if (card.getShape() == Shape.TRIANGLE && !card.isFilled()) {
+                System.out.print(" ");
+            } else {
+                System.out.print("  ");
+            }
+            lastX = x;
+            lastY = y;
         }
     }
 }
