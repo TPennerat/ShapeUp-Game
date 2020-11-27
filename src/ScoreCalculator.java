@@ -4,8 +4,6 @@ public class ScoreCalculator implements InterfaceVisitor {
     @Override
     public int visitBoard(AbstractBoard board, Card victoryCard) {
         
-		//Card victorycard = p.getVictoryCard(); //Recupere victory card du joueur
-		
 		Color victorycolor = victoryCard.getColor(); //Recupere les attributs de la victory card du joueur
 		Shape victoryshape = victoryCard.getShape();
 		boolean victoryfilled = victoryCard.isFilled();
@@ -16,10 +14,7 @@ public class ScoreCalculator implements InterfaceVisitor {
 		int maxY = board.getRealMaximumY();
 
         List<Coord> coords = board.toList(); //cree une liste de coord
-        coords.sort(Coord::compareTo); //tri des cartes en fonctions de leurs coordonnees (les ordonne)
-
-        // abstractboard.getPlacedCards().get(c);
-
+        coords.sort(Coord::compareTo); //ordonne les coord sur le plateau (tri)
 
 		//-------------------------------------- INITIALISATION ----------------------------------------
 		
@@ -35,22 +30,20 @@ public class ScoreCalculator implements InterfaceVisitor {
 		int posY_filled = minY; //utilise pour le while de filled
 
         Coord coord = new Coord(minX, minY); 
-		Card card = board.getPlacedCards().get(coord); //va chercher la carte du board aux coord (minX, minY)
+		Card card = board.getPlacedCards().get(coord); //va chercher la card du board aux coord (minX, minY) soit (0,0)
 		
 		Color cardcolor = card.getColor();  //Recupere les attributs de la card en (minX,minY)
 		Shape cardshape = card.getShape();
 		boolean cardfilled = card.isFilled();
 
 		int i = 0; //compte le nombre de cartes identiques
-		int cpt_int = 0; //compte le nombre de points en fonction du nombre de cartes identiques
-		int cpt_tot = 0; //compte le nombre de points en fonction du nombre de cartes identiques
+		int cpt_int = 0; //compte le nombre de points pour chaque suite de cartes identiques sur plateau
+		int cpt_tot = 0; //compte le nombre de points total
 
-		
-		
 		//----------------------------------- SCAN DES LIGNES --------------------------------------------
 		while(posY < maxY) { 
 			
-			while(posX_color < maxX) {  
+			while(posX_color < maxX) {  //scan des attributs color pour chaque ligne
 				
 				if(cardcolor == victorycolor) {
 					i++;
@@ -77,7 +70,7 @@ public class ScoreCalculator implements InterfaceVisitor {
 		        cpt_int = 0;
 			}
 			
-			while(posX_shape < maxX) {  
+			while(posX_shape < maxX) {  //scan des attributs shape pour chaque ligne
 				
 				if(cardshape == victoryshape) {
 					i++;
@@ -104,9 +97,9 @@ public class ScoreCalculator implements InterfaceVisitor {
 		        cpt_int = 0;
 			}
 			
-			while(posX_filled < maxX) {  
+			while(posX_filled < maxX) {  //scan des attributs filled pour chaque ligne
 				
-				if(cardfilled == victoryfilled) {
+				if(cardfilled == victoryfilled) { 
 					i++;
 					
 					if(i >= 3){ //si au moins 3 cartes avec meme filled, augmenter cpt_int
@@ -131,13 +124,14 @@ public class ScoreCalculator implements InterfaceVisitor {
 		        cpt_int = 0;
 			}
 
+			i = 0;
 			posY++; //On passe a la ligne suivante
 		}
 		
 		//----------------------------------- SCAN DES COLONNES --------------------------------------------
 		while(posX < maxX) { 
 			
-			while(posY_color < maxY) {  
+			while(posY_color < maxY) {  //scan des attributs color pour chaque colonne
 				
 				if(cardcolor == victorycolor) {
 					i++;
@@ -164,7 +158,7 @@ public class ScoreCalculator implements InterfaceVisitor {
 		        cpt_int = 0;
 			}
 			
-			while(posY_shape < maxY) {  
+			while(posY_shape < maxY) {  //scan des attributs shape pour chaque colonne
 				
 				if(cardshape == victoryshape) {
 					i++;
@@ -191,7 +185,7 @@ public class ScoreCalculator implements InterfaceVisitor {
 		        cpt_int = 0;
 			}
 			
-			while(posY_filled < maxY) {  
+			while(posY_filled < maxY) {  //scan des attributs filled pour chaque colonne
 				
 				if(cardfilled == victoryfilled) {
 					i++;
@@ -221,6 +215,7 @@ public class ScoreCalculator implements InterfaceVisitor {
 			posX++; //On passe a la colonne suivante
 		}
 
+		i = 0;
 		return cpt_tot; //Score total du joueur
     }
 }
