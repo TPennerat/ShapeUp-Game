@@ -2,7 +2,7 @@ public class ScoreCalculator implements InterfaceVisitor {
 	
 	public int visitBoard(AbstractBoard abstractboard, Player p) {
 		
-		Card victorycard = p.getVictoryCard(); //Récupère victory card du joueur
+		/*Card victorycard = p.getVictoryCard(); //Récupère victory card du joueur
 		
 		Color victorycolor = victorycard.getColor(); //Récupère les attributs de la victory card du joueur
 		Shape victoryshape = victorycard.getShape();
@@ -13,7 +13,7 @@ public class ScoreCalculator implements InterfaceVisitor {
 		int minY = abstractboard.getRealMinimunY();
 		int maxY = abstractboard.getRealMaximumY();
 
-		//-------------------------------------- initialisation ----------------------------------------
+		//-------------------------------------- INITIALISATION ----------------------------------------
 		
 		int posX = minX;
 		int posY = minY;
@@ -29,7 +29,7 @@ public class ScoreCalculator implements InterfaceVisitor {
 		card.setPosX(minX); //Pointe sur la 1ere carte du plateau
 		card.setPosY(minY);
 
-		card.hashCode(); //retourne la carte en (minX,minY)
+		card.hashCode(); //retourne la carte aux coordonnées (minX,minY)
 		
 		Color cardcolor = card.getColor();  //Récupère les attributs de la card en (minX,minY)
 		Shape cardshape = card.getShape();
@@ -163,7 +163,7 @@ public class ScoreCalculator implements InterfaceVisitor {
 
 		return cpt_tot; //Score total du joueur
 
-		//for (Card card : placedCards) { }
+		//for (Card card : placedCards) { }*/
 	}
 	
 }
