@@ -40,7 +40,7 @@ public class RectangleBoard extends AbstractBoard {
                     }
                 } else {
                     if (x - lastX != 1) {
-                        for (int i = lastX; i < x; i++) {
+                        for (int i = lastX; i <= x; i++) {
                             printSpace();
                         }
                     }

@@ -63,7 +63,7 @@ public class ShapeUp {
 
     private boolean isGameFinished() {
         if (playerList.size() == 2) {
-            return deck.size() == 0;
+            return deck.size() == 1;
         } else {
             return deck.size() == 1;
         }
@@ -72,11 +72,13 @@ public class ShapeUp {
     private void startRound() {
         for (Player p :
                 playerList) {
-            System.out.println("\nA vous de jouer " + p.getPseudo());
-            startPlayerTurn(p);
-            System.out.println("\nPlateau de jeu :\n");
-            board.showBoard();
-            System.out.print('\n');
+            if (!isGameFinished()) {
+                System.out.println("\nA vous de jouer " + p.getPseudo());
+                startPlayerTurn(p);
+                System.out.println("\nPlateau de jeu :\n");
+                board.showBoard();
+                System.out.print('\n');
+            }
         }
     }
 
@@ -122,7 +124,6 @@ public class ShapeUp {
                 }
             } else {
                 moveTurn(p);
-
                 System.out.println("Placer maintenant la carte :");
                 System.out.println(card.toASCIIArt());
                 playTurn(p, card);
@@ -250,7 +251,7 @@ public class ShapeUp {
         // demande le nombre de joueur réel à l'utilisateur
         String messageRealPlayer = "Combien y a-t-il de joueur réel parmis les " + nbPlayer + " joueurs ?";
         int nbRealPlayer = askNumber(messageRealPlayer);
-        while (nbRealPlayer > nbPlayer || nbRealPlayer < 1) {
+        while (nbRealPlayer > nbPlayer || nbRealPlayer < 0) {
             System.err.println("Le nombre de joueur doit être compris entre 1 et " + nbPlayer + ".");
             nbRealPlayer = askNumber(messageRealPlayer);
         }
