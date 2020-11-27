@@ -58,13 +58,16 @@ public class ShapeUp {
         while (!isGameFinished()) {
             startRound();
         }
+        calculeAndShowScore();
+    }
 
+    protected void calculeAndShowScore() {
         for (Player player : playerList) {  //Calcul du score pour chaque joueur (pas fini)
             board.accept(new ScoreCalculator(), player);
-            System.out.println(player.getScore());
+            System.out.println("\n Score du joueur "+player.getPseudo()+" : "+player.getScore());
         }
-
     }
+
 
     protected boolean isGameFinished() {
         if (playerList.size() == 2) {

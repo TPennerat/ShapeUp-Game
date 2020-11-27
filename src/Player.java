@@ -92,4 +92,6 @@ public abstract class Player {
         }
         return choiceNumber;
     }
+
+    public abstract int askHandChoice(String messageWhichCard);
 }

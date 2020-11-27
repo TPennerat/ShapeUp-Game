@@ -20,4 +20,9 @@ public class PlayingStrategy2 implements PlayingStrategy {
     public int askMoveChoice() {
         return 2;
     }
+
+    @Override
+    public int handChoice() {
+        return 1;
+    }
 }

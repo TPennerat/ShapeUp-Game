@@ -25,11 +25,18 @@ public class AdvancedShapeUp extends ShapeUp {
             p.setHand(hand);
             i++;
         }
+        deck.remove(); // hidden card
         startRound();
         isFirstRound = false;
         while (!isGameFinished()) {
             startRound();
         }
+
+        for (Player player : playerList) {
+            player.setVictoryCard(player.getHand().get(0));
+        }
+
+        calculeAndShowScore();
     }
 
     @Override
@@ -53,8 +60,24 @@ public class AdvancedShapeUp extends ShapeUp {
 
     private Card determineWhichCardToPlay(Player p) {
         showHand(p);
-        String messageWhichCard = "Quelle carte de votre main souhaitez-vous jouer ?";
-        return null;
+        String modulaire = "";
+        List<Card> hand = p.getHand();
+        switch (hand.size()) {
+            case 2:
+                modulaire = (hand.get(0).toASCIIArt() + " : 1; " + hand.get(1).toASCIIArt() + " : 2");
+                break;
+            case 3:
+                modulaire = (hand.get(0).toASCIIArt() + " : 1; " + hand.get(1).toASCIIArt() + " : 2; " + hand.get(2).toASCIIArt() + " : 3");
+                break;
+            default:
+                break;
+        }
+        if (deck.size() != 0) {
+            hand.add(deck.remove());
+            p.setHand(hand);
+        }
+        String messageWhichCard = "Quelle carte de votre main souhaitez-vous jouer ? ("+modulaire+")";
+        return hand.remove(p.askHandChoice(messageWhichCard));
     }
 
     @Override

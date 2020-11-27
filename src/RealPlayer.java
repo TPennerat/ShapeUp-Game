@@ -54,5 +54,15 @@ public class RealPlayer extends Player {
         }
         sc.nextLine();
         return res;
-    };
+    }
+
+    @Override
+    public int askHandChoice(String messageWhichCard) {
+        int numberWhichCard = ShapeUp.askNumber(messageWhichCard);
+        while (numberWhichCard > hand.size() || numberWhichCard < 1) {
+            System.err.println("La carte a jouer doit être entre 1 et "+hand.size()+".");
+            numberWhichCard = ShapeUp.askNumber(messageWhichCard);
+        }
+        return numberWhichCard - 1;
+    }
 }

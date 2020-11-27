@@ -25,4 +25,9 @@ public class VirtualPlayer extends Player {
     public int askMoveChoice() {
         return playingStrategy.askMoveChoice();
     }
+
+    @Override
+    public int askHandChoice(String messageWhichCard) {
+        return playingStrategy.handChoice();
+    }
 }

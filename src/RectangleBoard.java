@@ -73,4 +73,5 @@ public class RectangleBoard extends AbstractBoard {
             return getRealMaximumY();
         return getRealMaximumY() + 1;
     }
+
 }

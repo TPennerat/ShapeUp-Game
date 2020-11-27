@@ -3,4 +3,5 @@ public interface PlayingStrategy {
     Coord move(int minX, int minY, int maxX, int maxY);
     int askChoice();
     int askMoveChoice();
+    int handChoice();
 }
