@@ -4,19 +4,19 @@ public class ScoreCalculator implements InterfaceVisitor {
     @Override
     public int visitBoard(AbstractBoard board, Card victoryCard) {
         
-		//Card victorycard = p.getVictoryCard(); //RÃƒÂ©cupÃƒÂ¨re victory card du joueur
+		//Card victorycard = p.getVictoryCard(); //Recupere victory card du joueur
 		
-		Color victorycolor = victoryCard.getColor(); //RÃƒÂ©cupÃƒÂ¨re les attributs de la victory card du joueur
+		Color victorycolor = victoryCard.getColor(); //Recupere les attributs de la victory card du joueur
 		Shape victoryshape = victoryCard.getShape();
 		boolean victoryfilled = victoryCard.isFilled();
 
-		int minX = board.getRealMinimunX(); //RÃƒÂ©cupÃƒÂ©re les bornes du plateau
+		int minX = board.getRealMinimunX(); //Recupere les bornes du plateau
 		int maxX = board.getRealMaximumX();
 		int minY = board.getRealMinimumY();
 		int maxY = board.getRealMaximumY();
 
-        List<Coord> coords = board.toList(); //crÃ©e une liste de coord
-        coords.sort(Coord::compareTo); //tri des cartes en fonctions de leurs coordonnÃ©es (les ordonne)
+        List<Coord> coords = board.toList(); //cree une liste de coord
+        coords.sort(Coord::compareTo); //tri des cartes en fonctions de leurs coordonnees (les ordonne)
 
         // abstractboard.getPlacedCards().get(c);
 
@@ -26,18 +26,18 @@ public class ScoreCalculator implements InterfaceVisitor {
 		int posX = minX;
 		int posY = minY;
 
-		int posX_color = minX; //utilisÃƒÂ© pour le while de color
-		int posX_shape = minX; //utilisÃƒÂ© pour le while de shape
-		int posX_filled = minX; //utilisÃƒÂ© pour le while de filled
+		int posX_color = minX; //utilise pour le while de color
+		int posX_shape = minX; //utilie pour le while de shape
+		int posX_filled = minX; //utilise pour le while de filled
 		
-		int posY_color = minY; //utilisÃƒÂ© pour le while de color
-		int posY_shape = minY; //utilisÃƒÂ© pour le while de shape
-		int posY_filled = minY; //utilisÃƒÂ© pour le while de filled
+		int posY_color = minY; //utilise pour le while de color
+		int posY_shape = minY; //utilise pour le while de shape
+		int posY_filled = minY; //utilise pour le while de filled
 
         Coord coord = new Coord(minX, minY); 
 		Card card = board.getPlacedCards().get(coord); //va chercher la carte du board aux coord (minX, minY)
 		
-		Color cardcolor = card.getColor();  //RÃƒÂ©cupÃƒÂ¨re les attributs de la card en (minX,minY)
+		Color cardcolor = card.getColor();  //Recupere les attributs de la card en (minX,minY)
 		Shape cardshape = card.getShape();
 		boolean cardfilled = card.isFilled();
 
