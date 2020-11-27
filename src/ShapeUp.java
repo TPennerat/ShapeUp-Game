@@ -1,19 +1,15 @@
-import jdk.swing.interop.SwingInterOpUtils;
-
 import java.util.*;
 
 public class ShapeUp {
-    private List<Player> playerList;
-    private AbstractBoard board;
-    private Set<Rule> rules;
-    private Queue<Card> deck;
-    private boolean isFirstRound;
-    private boolean isFirstTurn;
+    protected List<Player> playerList;
+    protected AbstractBoard board;
+    protected Queue<Card> deck;
+    protected boolean isFirstRound;
+    protected boolean isFirstTurn;
 
-    public ShapeUp(List<Player> players, AbstractBoard board, Set<Rule> rules, Queue<Card> deck) {
+    public ShapeUp(List<Player> players, AbstractBoard board, Queue<Card> deck) {
         this.playerList = players;
         this.board = board;
-        this.rules = rules;
         this.deck = deck;
         isFirstRound = true;
         isFirstTurn = true;
@@ -26,29 +22,37 @@ public class ShapeUp {
         System.out.println("Paquet de cartes prêt.");
         List<Player> players = askPlayersInfo();
         AbstractBoard board = askBoardInfo();
-        Set<Rule> rules = askRulesInfo();
-        ShapeUp game = new ShapeUp(players, board, rules, cards);
+        ShapeUp game = askAdvancedShapeUp(players, board, cards);
         game.startGame();
     }
 
-    private void startGame() {
+    private static ShapeUp askAdvancedShapeUp(List<Player> players, AbstractBoard board, Queue<Card> cards) {
+        String messageVersion = "A quel version de ShapeUp! souhaitez-vous jouer ? (1 : normal; 2 : advanced)";
+        int nbVersion = askNumber(messageVersion);
+        while (nbVersion > 2 || nbVersion < 1) {
+            System.err.println("Le nombre de version doit être compris entre 1 et 2.");
+            nbVersion = askNumber(messageVersion);
+        }
+        if (nbVersion == 1) {
+            return  new ShapeUp(players, board, cards);
+        } else {
+            return new AdvancedShapeUp(players, board, cards);
+        }
+    }
+
+    protected void startGame() {
         Iterator<Player> ip = playerList.iterator();
-        Scanner sc = new Scanner(System.in);
         int i = 1;
         Player p;
         while (ip.hasNext()) {
             p = ip.next();
-            if (p instanceof RealPlayer) {
-                System.out.print("Carte de victoire du joueur n°" + i + " (appuie sur entrée pour decouvrir)");
-                sc.nextLine();
-                Card pc = deck.remove();
-                p.setVictoryCard(pc);
-                System.out.println(pc.toASCIIArt());
-                i++;
-            } else {
-                p.setVictoryCard(deck.remove());
-            }
+            System.out.println("Carte de victoire du joueur n°" + i);
+            Card pc = deck.remove();
+            p.setVictoryCard(pc);
+            System.out.println(pc.toASCIIArt());
+            i++;
         }
+        deck.remove(); // hidden card
         startRound();
         isFirstRound = false;
         while (!isGameFinished()) {
@@ -61,33 +65,40 @@ public class ShapeUp {
 
     }
 
-    private boolean isGameFinished() {
+    protected boolean isGameFinished() {
         if (playerList.size() == 2) {
-            return deck.size() == 1;
+            return deck.size() == 0;
         } else {
             return deck.size() == 1;
         }
     }
 
-    private void startRound() {
+    protected void startRound() {
         for (Player p :
                 playerList) {
             if (!isGameFinished()) {
                 System.out.println("\nA vous de jouer " + p.getPseudo());
-                startPlayerTurn(p);
+                Card card = deck.remove();
+                System.out.println("Carte à placer :");
+                System.out.println(card.toASCIIArt());
+                startPlayerTurn(p, card);
                 System.out.println("\nPlateau de jeu :\n");
                 board.showBoard();
                 System.out.print('\n');
             }
         }
+        if (isGameFinished()) {
+            System.out.println("\nPlateau de jeu :\n");
+            board.showBoard();
+        }
     }
 
-    private Coord play(Player p) {
+    protected Coord play(Player p) {
         return p.play(board.getPotentialMinimumX(), board.getPotentialMinimumY(), board.getPotentialMaximumX(),
                 board.getPotentialMaximumY());
     }
 
-    private Coord move(Player p, int action) {
+    protected Coord move(Player p, int action) {
         if (action == Player.CARD_CHOSING) {
             return p.move(board.getRealMinimunX(), board.getRealMinimumY(), board.getRealMaximumX(),
                     board.getRealMaximumY(), action);
@@ -99,10 +110,7 @@ public class ShapeUp {
         }
     }
 
-    private void startPlayerTurn(Player p) {
-        Card card = deck.remove();
-        System.out.println("Carte à placer :");
-        System.out.println(card.toASCIIArt());
+    protected void startPlayerTurn(Player p, Card card) {
         Coord c;
         if (isFirstRound) {
             c = play(p);
@@ -131,7 +139,7 @@ public class ShapeUp {
         }
     }
 
-    private void moveTurn(Player p) {
+    protected void moveTurn(Player p) {
         Coord c = move(p, Player.CARD_CHOSING);
         while (!board.isCoordAlreadyExisting(c)) {
             System.err.println("Aucune carte ici.");
@@ -146,7 +154,7 @@ public class ShapeUp {
         board.placeCard(c, aPlacer);
     }
 
-    private void playTurn(Player p, Card card) {
+    protected void playTurn(Player p, Card card) {
         Coord c = play(p);
         while (!board.isCardCorrectlyPlaced(c)) {
             System.err.println("Carte mal placée.");
@@ -179,12 +187,6 @@ public class ShapeUp {
         shuffleCardList.add(new Card(Color.GREEN, Shape.CIRCLE, true));
         Collections.shuffle(shuffleCardList);
         return new LinkedList<>(shuffleCardList);
-    }
-
-    private static Set<Rule> askRulesInfo() {
-        Set<Rule> rules = new HashSet<>();
-        rules.add(new ClassicRule());
-        return rules; //TODO rules je sais pas comment n'y prendre encore
     }
 
     private static AbstractBoard askBoardInfo() {
@@ -262,9 +264,21 @@ public class ShapeUp {
             playerName = askString("Comment s'appelle le joueur " + (i + 1) + " ?");
             players.add(new RealPlayer(playerName));
         }
-        for (int i = 0; i < nbVirtualPlayer; i++) {
-            playerName = "Robot " + (i + 1);
-            players.add(new VirtualPlayer(playerName, new PlayingStrategy1())); //TODO demander difficulté
+        if (nbVirtualPlayer!=0) {
+            String messageDifficulty = "Difficulté de l'IA ? (1 = facile)";
+            int nbDifficutly = askNumber(messageDifficulty);
+            while (nbDifficutly != 1) {
+                System.err.println("Le nombre de la difficulté doit être 1.");
+                nbDifficutly = askNumber(messageDifficulty);
+            }
+            for (int i = 0; i < nbVirtualPlayer; i++) {
+                playerName = "Robot " + (i + 1);
+                PlayingStrategy ps = null;
+                if (nbDifficutly == 1) {
+                    ps = new PlayingStrategy1();
+                }
+                players.add(new VirtualPlayer(playerName, ps));
+            }
         }
         return players;
     }

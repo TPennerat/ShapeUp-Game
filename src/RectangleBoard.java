@@ -7,18 +7,6 @@ public class RectangleBoard extends AbstractBoard {
         return isAtLeastOneAdjacentCard(c) && !isCoordAlreadyExisting(c);
     }
 
-    @Override
-    protected boolean isAtLeastOneAdjacentCard(Coord c) {
-        Iterator<Coord> i = placedCards.keySet().iterator();
-        boolean isAtLeastOneAdjacentCard = false;
-        while (i.hasNext()) {
-            Coord coord = i.next();
-            if (!isAtLeastOneAdjacentCard) {
-                isAtLeastOneAdjacentCard = coord.isCoordAdjacent(c);
-            }
-        }
-        return isAtLeastOneAdjacentCard;
-    }
 
     @Override
     public void showBoard() {

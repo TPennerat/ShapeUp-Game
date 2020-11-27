@@ -19,11 +19,29 @@ public abstract class AbstractBoard {
         return false;
     }
 
+    public Map<Coord, Card> getPlacedCards() {
+        return placedCards;
+    }
+
+    public void setPlacedCards(Map<Coord, Card> placedCards) {
+        this.placedCards = placedCards;
+    }
+
     public void placeCard(Coord coord, Card card) {
         placedCards.put(coord, card);
     }
 
-    protected abstract boolean isAtLeastOneAdjacentCard(Coord c);
+    protected boolean isAtLeastOneAdjacentCard(Coord c) {
+        Iterator<Coord> i = placedCards.keySet().iterator();
+        boolean isAtLeastOneAdjacentCard = false;
+        while (i.hasNext()) {
+            Coord coord = i.next();
+            if (!isAtLeastOneAdjacentCard) {
+                isAtLeastOneAdjacentCard = coord.isCoordAdjacent(c);
+            }
+        }
+        return isAtLeastOneAdjacentCard;
+    }
 
     public abstract void showBoard();
 
@@ -91,7 +109,7 @@ public abstract class AbstractBoard {
         }
     }
 
-    private List<Coord> toList() {
+    public List<Coord> toList() {
         Set<Coord> s = placedCards.keySet();
         return new ArrayList<>(s);
     }

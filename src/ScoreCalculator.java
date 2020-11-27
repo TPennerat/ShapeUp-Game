@@ -1,8 +1,11 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class ScoreCalculator implements InterfaceVisitor {
 	
 	public int visitBoard(AbstractBoard abstractboard, Player p) {
 		
-		/*Card victorycard = p.getVictoryCard(); //Récupère victory card du joueur
+		Card victorycard = p.getVictoryCard(); //Récupère victory card du joueur
 		
 		Color victorycolor = victorycard.getColor(); //Récupère les attributs de la victory card du joueur
 		Shape victoryshape = victorycard.getShape();
@@ -10,8 +13,13 @@ public class ScoreCalculator implements InterfaceVisitor {
 
 		int minX = abstractboard.getRealMinimunX(); //Récupére les bornes du plateau
 		int maxX = abstractboard.getRealMaximumX();
-		int minY = abstractboard.getRealMinimunY();
+		int minY = abstractboard.getRealMinimumY();
 		int maxY = abstractboard.getRealMaximumY();
+
+        List<Coord> coords = abstractboard.toList();
+        coords.sort(Coord::compareTo);
+
+        // abstractboard.getPlacedCards().get(c);
 
 		//-------------------------------------- INITIALISATION ----------------------------------------
 		
@@ -25,11 +33,10 @@ public class ScoreCalculator implements InterfaceVisitor {
 		int posY_color = minY; //utilisé pour le while de color
 		int posY_shape = minY; //utilisé pour le while de shape
 		int posY_filled = minY; //utilisé pour le while de filled
-		
-		card.setPosX(minX); //Pointe sur la 1ere carte du plateau
-		card.setPosY(minY);
 
-		card.hashCode(); //retourne la carte aux coordonnées (minX,minY)
+        Coord coord = new Coord(minX, minY);
+
+		Card card = abstractboard.getPlacedCards().get(coord);
 		
 		Color cardcolor = card.getColor();  //Récupère les attributs de la card en (minX,minY)
 		Shape cardshape = card.getShape();
@@ -163,7 +170,7 @@ public class ScoreCalculator implements InterfaceVisitor {
 
 		return cpt_tot; //Score total du joueur
 
-		//for (Card card : placedCards) { }*/
+		//for (Card card : placedCards) { }
 	}
 	
 }

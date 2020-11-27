@@ -1,20 +1,40 @@
+import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 public abstract class Player {
 
     protected String pseudo;
     protected Card victoryCard;
+    protected List<Card> hand;
 
     public final static int CARD_DEPLACEMENT = 1;
     public final static int CARD_CHOSING = 2;
 
     public Player(String pseudo) {
         this.pseudo = pseudo;
+        hand = new ArrayList<>();
     }
 
     public String getPseudo() {
         return pseudo;
+    }
+
+    public List<Card> getHand() {
+        return hand;
+    }
+
+    public void setHand(List<Card> hand) {
+        this.hand = hand;
+    }
+
+    public void addCardHand(Card c) {
+        hand.add(c);
+    }
+
+    public void removeCardHand(Card c) {
+        hand.remove(c);
     }
 
     public void setPseudo(String pseudo) {
