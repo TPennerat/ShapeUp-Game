@@ -59,9 +59,10 @@ public class ShapeUp {
             startRound();
         }
 
-        /*for (Player p : playerList) {  //Calcul du score pour chaque joueur (pas fini)
-            board.accept(new Scorecalculator);
-        }*/
+        for (Player player : playerList) {  //Calcul du score pour chaque joueur (pas fini)
+            board.accept(new ScoreCalculator(), player);
+            System.out.println(player.getScore());
+        }
 
     }
 

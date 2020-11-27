@@ -8,6 +8,7 @@ public abstract class Player {
     protected String pseudo;
     protected Card victoryCard;
     protected List<Card> hand;
+    protected int score;
 
     public final static int CARD_DEPLACEMENT = 1;
     public final static int CARD_CHOSING = 2;
@@ -15,6 +16,15 @@ public abstract class Player {
     public Player(String pseudo) {
         this.pseudo = pseudo;
         hand = new ArrayList<>();
+        score = 0;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 
     public String getPseudo() {

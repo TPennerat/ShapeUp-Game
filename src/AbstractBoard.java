@@ -131,4 +131,8 @@ public abstract class AbstractBoard {
         placedCards.remove(coord);
         return aPlacer;
     }
+
+    public void accept(InterfaceVisitor iv, Player p) {
+        p.setScore(iv.visitBoard(this, p.getVictoryCard()));
+    }
 }

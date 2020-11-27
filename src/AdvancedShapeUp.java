@@ -53,7 +53,7 @@ public class AdvancedShapeUp extends ShapeUp {
 
     private Card determineWhichCardToPlay(Player p) {
         showHand(p);
-        String messageWhichCard = "";
+        String messageWhichCard = "Quelle carte de votre main souhaitez-vous jouer ?";
         return null;
     }
 
