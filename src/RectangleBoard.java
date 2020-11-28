@@ -14,12 +14,14 @@ public class RectangleBoard extends AbstractBoard {
         List<Coord> l = new ArrayList<>(s);
         l.sort(Coord::compareTo);
         int x, y, lastX = l.get(0).getPosX(), lastY = l.get(0).getPosY();
+        System.out.print(getRealMaximumY()+" ");
         for (Coord c:
              l) {
             x = c.getPosX();
             y = c.getPosY();
             if (lastY != y) {
                 System.out.print('\n');
+                System.out.print(y+" ");
             }
             if (x != getRealMinimunX()) {
                 if (lastY != y) {
@@ -44,6 +46,11 @@ public class RectangleBoard extends AbstractBoard {
             lastX = x;
             lastY = y;
         }
+        System.out.println();
+        for (int i = getRealMinimunX(); i<=getRealMaximumX(); i++) {
+            System.out.print("  "+i+"  ");
+        }
+        System.out.println();
     }
 
     @Override
