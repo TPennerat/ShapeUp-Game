@@ -70,11 +70,7 @@ public class ShapeUp {
 
 
     protected boolean isGameFinished() {
-        if (playerList.size() == 2) {
-            return deck.size() == 0;
-        } else {
-            return deck.size() == 1;
-        }
+        return deck.size() == 0;
     }
 
     protected void startRound() {

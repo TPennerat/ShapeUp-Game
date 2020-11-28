@@ -36,7 +36,10 @@ public class ScoreCalculator implements InterfaceVisitor {
 
         Coord coord = new Coord(minX, minY);
 		Card card = board.getPlacedCards().get(coord); //va chercher la carte du board aux coord (minX, minY)
-		
+
+		if (card == null)
+			coord = new Coord(minX+1, minY);
+		card = board.getPlacedCards().get(coord);
 		Color cardcolor = card.getColor();  //Recupere les attributs de la card en (minX,minY)
 		Shape cardshape = card.getShape();
 		boolean cardfilled = card.isFilled();
@@ -73,7 +76,9 @@ public class ScoreCalculator implements InterfaceVisitor {
 
 		        if(card != null)
 		        	cardcolor = card.getColor(); //recupere cardcolor de la nouvelle carte
-				
+				else {
+					cardcolor = null;
+				}
 
 			}
 			i=0;
@@ -100,9 +105,11 @@ public class ScoreCalculator implements InterfaceVisitor {
 				coord = new Coord(posX_shape, posY);
 		        card = board.getPlacedCards().get(coord);
 
-		        if (card!=null)
-		       	 cardshape = card.getShape(); //recupere cardshape de la nouvelle carte
-				
+		        if (card!=null) {
+					cardshape = card.getShape(); //recupere cardshape de la nouvelle carte
+				} else {
+					cardshape = null;
+				}
 
 			}
 			i=0;
@@ -129,9 +136,15 @@ public class ScoreCalculator implements InterfaceVisitor {
 				coord = new Coord(posX_filled, posY);
 		        card = board.getPlacedCards().get(coord);
 
-		        if (card!=null)
-		        cardfilled = card.isFilled(); //recupere cardfilled de la nouvelle carte
-				
+		        if (card!=null) {
+					cardfilled = card.isFilled(); //recupere cardfilled de la nouvelle carte
+				} else if (posX_filled < maxX){
+					posX_filled++;
+
+					coord = new Coord(posX_filled, posY);
+					card = board.getPlacedCards().get(coord);
+					cardfilled = card.isFilled();
+				}
 
 			}
 			i=0;
@@ -161,12 +174,14 @@ public class ScoreCalculator implements InterfaceVisitor {
 				
 				posY_color++; 
 				
-				coord = new Coord(posY_color, posX);
+				coord = new Coord(posX, posY_color);
 		        card = board.getPlacedCards().get(coord);
 
 		        if (card!=null)
 		        cardcolor = card.getColor(); //recupere cardcolor de la nouvelle carte
-
+				else {
+					cardcolor = null;
+				}
 			}
 			i=0;
 			cpt_tot += cpt_int;
@@ -189,11 +204,13 @@ public class ScoreCalculator implements InterfaceVisitor {
 				
 				posY_shape++; 
 				
-				coord = new Coord(posY_shape, posX);
+				coord = new Coord(posX, posY_shape);
 		        card = board.getPlacedCards().get(coord);
 				if (card!=null)
 		        cardshape = card.getShape(); //recupere cardshape de la nouvelle carte
-
+				else {
+					cardshape = null;
+				}
 			}
 			i=0;
 			cpt_tot += cpt_int;
@@ -216,11 +233,18 @@ public class ScoreCalculator implements InterfaceVisitor {
 				
 				posY_filled++; 
 				
-				coord = new Coord(posY_filled, posX);
+				coord = new Coord(posX, posY_filled);
 		        card = board.getPlacedCards().get(coord);
 				if (card!=null)
 		        cardfilled = card.isFilled(); //recupere cardfilled de la nouvelle carte
+				else if (posY_filled < maxY){
+					posY_filled++;
 
+					coord = new Coord(posX, posY_filled);
+					card = board.getPlacedCards().get(coord);
+
+					cardfilled = card.isFilled();
+				}
 			}
 			i=0;
 			cpt_tot += cpt_int;
