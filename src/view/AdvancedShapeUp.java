@@ -14,7 +14,6 @@ public class AdvancedShapeUp extends ShapeUp {
         super(players, board, deck);
     }
 
-    @Override
     protected void startGame() {
         Iterator<Player> ip = playerList.iterator();
         int i = 1;
@@ -42,7 +41,6 @@ public class AdvancedShapeUp extends ShapeUp {
             player.setVictoryCard(player.getHand().get(0));
         }
 
-        calculeAndShowScore();
     }
 
     @Override

@@ -1,6 +1,15 @@
 package model;
 
 import com.diogonunes.jcolor.Attribute;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
+import java.io.File;
+import java.io.IOException;
+
 import static com.diogonunes.jcolor.Ansi.*;
 import static com.diogonunes.jcolor.Attribute.*;
 
@@ -8,11 +17,17 @@ public class Card {
     private Color color;
     private Shape shape;
     private boolean filled;
+    private BufferedImage img;
 
-    public Card(Color c, Shape s, boolean filled) {
+    public Card(Color c, Shape s, boolean filled, String imgLink) {
         color = c;
         shape = s;
         this.filled = filled;
+        try {
+            img = ImageIO.read(new File(imgLink));
+        } catch (IOException ex) {
+            // handle exception...
+        }
     }
 
     @Override

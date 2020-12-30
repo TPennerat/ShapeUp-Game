@@ -22,12 +22,11 @@ public class ShapeUp {
     public static void main(String[] args) {
         System.out.println("Bienvenue dans ShapeUp !"); // salutation du joueur
         System.out.println("Préparation du paquet de cartes...");
-        Queue<Card> cards = createCards();
         System.out.println("Paquet de cartes prêt.");
         List<Player> players = askPlayersInfo();
         AbstractBoard board = askBoardInfo();
-        ShapeUp game = askAdvancedShapeUp(players, board, cards);
-        game.startGame();
+        ShapeUp game = askAdvancedShapeUp(players, board, null);
+        // start game ?
     }
 
     private static ShapeUp askAdvancedShapeUp(List<Player> players, AbstractBoard board, Queue<Card> cards) {
@@ -44,33 +43,7 @@ public class ShapeUp {
         }
     }
 
-    protected void startGame() {
-        Iterator<Player> ip = playerList.iterator();
-        int i = 1;
-        Player p;
-        while (ip.hasNext()) {
-            p = ip.next();
-            System.out.println("Carte de victoire du joueur n°" + i);
-            Card pc = deck.remove();
-            p.setVictoryCard(pc);
-            System.out.println(pc.toASCIIArt());
-            i++;
-        }
-        deck.remove(); // hidden card
-        startRound();
-        isFirstRound = false;
-        while (!isGameFinished()) {
-            startRound();
-        }
-        calculeAndShowScore();
-    }
 
-    protected void calculeAndShowScore() {
-        for (Player player : playerList) {  //Calcul du score pour chaque joueur (pas fini)
-            board.accept(new ScoreCalculator(), player);
-            System.out.println("\n Score du joueur "+player.getPseudo()+" : "+player.getScore());
-        }
-    }
 
 
     protected boolean isGameFinished() {
@@ -165,32 +138,6 @@ public class ShapeUp {
             c = play(p);
         }
         board.placeCard(c, card);
-    }
-
-    private static Queue<Card> createCards() {
-        List<Card> shuffleCardList = new ArrayList<>();
-        shuffleCardList.add(new Card(Color.RED, Shape.SQUARE, false));
-        shuffleCardList.add(new Card(Color.BLUE, Shape.SQUARE, false));
-        shuffleCardList.add(new Card(Color.GREEN, Shape.SQUARE, false));
-        shuffleCardList.add(new Card(Color.RED, Shape.SQUARE, true));
-        shuffleCardList.add(new Card(Color.BLUE, Shape.SQUARE, true));
-        shuffleCardList.add(new Card(Color.GREEN, Shape.SQUARE, true));
-
-        shuffleCardList.add(new Card(Color.RED, Shape.TRIANGLE, false));
-        shuffleCardList.add(new Card(Color.BLUE, Shape.TRIANGLE, false));
-        shuffleCardList.add(new Card(Color.GREEN, Shape.TRIANGLE, false));
-        shuffleCardList.add(new Card(Color.RED, Shape.TRIANGLE, true));
-        shuffleCardList.add(new Card(Color.BLUE, Shape.TRIANGLE, true));
-        shuffleCardList.add(new Card(Color.GREEN, Shape.TRIANGLE, true));
-
-        shuffleCardList.add(new Card(Color.RED, Shape.CIRCLE, false));
-        shuffleCardList.add(new Card(Color.BLUE, Shape.CIRCLE, false));
-        shuffleCardList.add(new Card(Color.GREEN, Shape.CIRCLE, false));
-        shuffleCardList.add(new Card(Color.RED, Shape.CIRCLE, true));
-        shuffleCardList.add(new Card(Color.BLUE, Shape.CIRCLE, true));
-        shuffleCardList.add(new Card(Color.GREEN, Shape.CIRCLE, true));
-        Collections.shuffle(shuffleCardList);
-        return new LinkedList<>(shuffleCardList);
     }
 
     private static AbstractBoard askBoardInfo() {
