@@ -17,6 +17,11 @@ public class Card {
     private Color color;
     private Shape shape;
     private boolean filled;
+
+    public BufferedImage getImg() {
+        return img;
+    }
+
     private BufferedImage img;
 
     public Card(Color c, Shape s, boolean filled, String imgLink) {
@@ -32,7 +37,7 @@ public class Card {
 
     @Override
     public String toString() {
-        return "model.Card{" +
+        return "Card{" +
                 "color=" + color +
                 ", shape=" + shape +
                 ", filled=" + filled +

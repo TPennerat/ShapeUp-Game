@@ -6,7 +6,7 @@ public class ScoreCalculator implements InterfaceVisitor {
     @Override
     public int visitBoard(AbstractBoard board, Card victoryCard) {
         
-		//model.Card victorycard = p.getVictoryCard(); //Recupere victory card du joueur
+		// Card victorycard = p.getVictoryCard(); //Recupere victory card du joueur
 		
 		Color victorycolor = victoryCard.getColor(); //Recupere les attributs de la victory card du joueur
 		Shape victoryshape = victoryCard.getShape();

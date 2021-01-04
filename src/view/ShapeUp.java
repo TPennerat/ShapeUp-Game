@@ -4,84 +4,75 @@ import model.*;
 
 import java.util.*;
 
-public class ShapeUp {
-    protected List<Player> playerList;
-    protected AbstractBoard board;
-    protected Queue<Card> deck;
-    protected boolean isFirstRound;
-    protected boolean isFirstTurn;
+public class ShapeUp implements Observer {
 
-    public ShapeUp(List<Player> players, AbstractBoard board, Queue<Card> deck) {
-        this.playerList = players;
-        this.board = board;
-        this.deck = deck;
-        isFirstRound = true;
-        isFirstTurn = true;
+    protected PlayingModel pm;
+
+    public ShapeUp(PlayingModel pm) {
+        this.pm = pm;
     }
 
-    public static void main(String[] args) {
+    public void launcher() {
         System.out.println("Bienvenue dans ShapeUp !"); // salutation du joueur
         System.out.println("Préparation du paquet de cartes...");
         System.out.println("Paquet de cartes prêt.");
         List<Player> players = askPlayersInfo();
         AbstractBoard board = askBoardInfo();
-        ShapeUp game = askAdvancedShapeUp(players, board, null);
+        ShapeUp game = askAdvancedShapeUp(pm);
         // start game ?
     }
 
-    private static ShapeUp askAdvancedShapeUp(List<Player> players, AbstractBoard board, Queue<Card> cards) {
-        String messageVersion = "A quel version de view.ShapeUp! souhaitez-vous jouer ? (1 : normal; 2 : advanced)";
+    private static ShapeUp askAdvancedShapeUp(PlayingModel pm) {
+        String messageVersion = "A quel version de ShapeUp! souhaitez-vous jouer ? (1 : normal; 2 : advanced)";
         int nbVersion = askNumber(messageVersion);
         while (nbVersion > 2 || nbVersion < 1) {
             System.err.println("Le nombre de version doit être compris entre 1 et 2.");
             nbVersion = askNumber(messageVersion);
         }
         if (nbVersion == 1) {
-            return  new ShapeUp(players, board, cards);
+            return  new ShapeUp(pm);
         } else {
-            return new AdvancedShapeUp(players, board, cards);
+            return new AdvancedShapeUp(pm);
         }
     }
 
 
 
 
-    protected boolean isGameFinished() {
-        return deck.size() == 0;
-    }
+
 
     protected void startRound() {
         for (Player p :
-                playerList) {
-            if (!isGameFinished()) {
+                pm.getPlayerList()) {
+            if (!pm.isGameFinished()) {
                 System.out.println("\nA vous de jouer " + p.getPseudo());
-                Card card = deck.remove();
+                Card card = pm.getDeck().remove();
                 System.out.println("Carte à placer :");
                 System.out.println(card.toASCIIArt());
                 startPlayerTurn(p, card);
                 System.out.println("\nPlateau de jeu :\n");
-                board.showBoard();
+                pm.getBoard().showBoard();
                 System.out.print('\n');
             }
         }
-        if (isGameFinished()) {
+        if (pm.isGameFinished()) {
             System.out.println("\nPlateau de jeu :\n");
-            board.showBoard();
+            pm.getBoard().showBoard();
         }
     }
 
     protected Coord play(Player p) {
-        return p.play(board.getPotentialMinimumX(), board.getPotentialMinimumY(), board.getPotentialMaximumX(),
-                board.getPotentialMaximumY());
+        return p.play(pm.getBoard().getPotentialMinimumX(), pm.getBoard().getPotentialMinimumY(), pm.getBoard().getPotentialMaximumX(),
+                pm.getBoard().getPotentialMaximumY());
     }
 
     protected Coord move(Player p, int action) {
         if (action == Player.CARD_CHOSING) {
-            return p.move(board.getRealMinimunX(), board.getRealMinimumY(), board.getRealMaximumX(),
-                    board.getRealMaximumY(), action);
+            return p.move(pm.getBoard().getRealMinimunX(), pm.getBoard().getRealMinimumY(), pm.getBoard().getRealMaximumX(),
+                    pm.getBoard().getRealMaximumY(), action);
         } else if (action == Player.CARD_DEPLACEMENT) {
-            return p.move(board.getPotentialMinimumX(), board.getPotentialMinimumY(), board.getPotentialMaximumX(),
-                    board.getPotentialMaximumY(), action);
+            return p.move(pm.getBoard().getPotentialMinimumX(), pm.getBoard().getPotentialMinimumY(), pm.getBoard().getPotentialMaximumX(),
+                    pm.getBoard().getPotentialMaximumY(), action);
         } else {
             return null;
         }
@@ -89,17 +80,17 @@ public class ShapeUp {
 
     protected void startPlayerTurn(Player p, Card card) {
         Coord c;
-        if (isFirstRound) {
+        if (pm.isFirstRound()) {
             c = play(p);
-            if (isFirstTurn) {
-                isFirstTurn = false;
+            if (pm.isFirstTurn()) {
+                pm.setIsFirstTurn(false);
             } else {
-                while (board.isCardCorrectlyPlaced(c)) {
+                while (pm.getBoard().isCardCorrectlyPlaced(c)) {
                     System.err.println("Carte mal placée.");
                     c = play(p);
                 }
             }
-            board.placeCard(c, card);
+            pm.getBoard().placeCard(c, card);
         } else {
             int res = p.askChoice();
             if (res == 1) {
@@ -118,26 +109,26 @@ public class ShapeUp {
 
     protected void moveTurn(Player p) {
         Coord c = move(p, Player.CARD_CHOSING);
-        while (!board.isCoordAlreadyExisting(c)) {
+        while (!pm.getBoard().isCoordAlreadyExisting(c)) {
             System.err.println("Aucune carte ici.");
             c = move(p, Player.CARD_CHOSING);
         }
-        Card aPlacer = board.removeCard(c);
+        Card aPlacer = pm.getBoard().removeCard(c);
         c = move(p, Player.CARD_DEPLACEMENT);
-        while (board.isCoordAlreadyExisting(c) || board.isCardCorrectlyPlaced(c)) {
+        while (pm.getBoard().isCoordAlreadyExisting(c) || pm.getBoard().isCardCorrectlyPlaced(c)) {
             System.err.println("Carte implacable ici.");
             c = move(p, Player.CARD_DEPLACEMENT);
         }
-        board.placeCard(c, aPlacer);
+        pm.getBoard().placeCard(c, aPlacer);
     }
 
     protected void playTurn(Player p, Card card) {
         Coord c = play(p);
-        while (board.isCardCorrectlyPlaced(c)) {
+        while (pm.getBoard().isCardCorrectlyPlaced(c)) {
             System.err.println("Carte mal placée.");
             c = play(p);
         }
-        board.placeCard(c, card);
+        pm.getBoard().placeCard(c, card);
     }
 
     private static AbstractBoard askBoardInfo() {
@@ -231,5 +222,10 @@ public class ShapeUp {
             }
         }
         return players;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+
     }
 }

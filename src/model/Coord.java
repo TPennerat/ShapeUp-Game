@@ -12,7 +12,7 @@ public class Coord implements Comparable{
     private int posY;
 
     /**
-     * Constructeur de la classe model.Coord
+     * Constructeur de la classe Coord
      *
      * @param x entier sur l'axe x
      * @param y entier sur l'axe y

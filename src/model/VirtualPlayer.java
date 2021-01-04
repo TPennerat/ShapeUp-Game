@@ -10,7 +10,8 @@ public class VirtualPlayer extends Player {
 
     @Override
     public Coord play(int minX, int minY, int maxX, int maxY) {
-        return playingStrategy.play(minX, minY, maxX, maxY);
+        return
+                playingStrategy.play(minX, minY, maxX, maxY);
     }
 
     @Override

@@ -79,9 +79,11 @@ public abstract class Player {
 
     @Override
     public String toString() {
-        return "model.Player{" +
+        return "Player{" +
                 "pseudo='" + pseudo + '\'' +
                 ", victoryCard=" + victoryCard +
+                ", hand=" + hand +
+                ", score=" + score +
                 '}';
     }
 

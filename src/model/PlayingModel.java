@@ -2,26 +2,53 @@ package model;
 
 import java.util.*;
 
-public class PlayingModel extends Observable{
+public class PlayingModel extends Observable {
 
     protected List<Player> playerList;
     protected AbstractBoard board;
+
+    public Queue<Card> getDeck() {
+        return deck;
+    }
+
     protected Queue<Card> deck;
+
+    public int getMODE() {
+        return MODE;
+    }
+
     private int MODE;
     public static final int NORMAL_MODE = 0;
     public static final int ADVANCED_MODE = 1;
     protected boolean isFirstRound;
     protected boolean isFirstTurn;
+
+    public int getCurrentPlayerIndex() {
+        return currentPlayerIndex;
+    }
+
+    public void setCurrentPlayerIndex(int currentPlayerIndex) {
+        this.currentPlayerIndex = currentPlayerIndex;
+    }
+
+    private int currentPlayerIndex;
+
+    public static int getActualState() {
+        return ACTUAL_STATE;
+    }
+
     public static int ACTUAL_STATE;
-    public final static int SETTING_STATE = 0;
-    public final static int PLAYING_STATE = 1;
-    public final static int MOVING_STATE = 2;
+    public static final int SETTING_STATE = 0;
+    public static final int PLAYING_STATE = 1;
+    public static final int MOVING_STATE = 2;
+    public static final int WAITING_STATE = 3;
 
     public PlayingModel() {
         deck = createCards();
         ACTUAL_STATE = SETTING_STATE;
         isFirstRound = true;
         isFirstTurn = true;
+        currentPlayerIndex = 0;
     }
 
     private Queue<Card> createCards() {
@@ -54,16 +81,55 @@ public class PlayingModel extends Observable{
         return playerList;
     }
 
-    public void setPlayerList(List<Player> playerList) {
-        this.playerList = playerList;
-    }
-
     public AbstractBoard getBoard() {
         return board;
     }
 
-    public void setBoard(AbstractBoard board) {
-        this.board = board;
+    public synchronized void setVariables(List<Player> lp, AbstractBoard b, int mode) {
+        board = b;
+        playerList = lp;
+        MODE = mode;
+        ACTUAL_STATE = WAITING_STATE;
+        setVictoryCards();
+        setHands();
+        setChanged();
+        notifyObservers();
+    }
+
+    private void setHands() {
+        Iterator<Player> ip = playerList.iterator();
+        Player p;
+        if (MODE==NORMAL_MODE) {
+            while (ip.hasNext()) {
+                p = ip.next();
+                Card pc1 = deck.remove();
+                ArrayList<Card> hand = new ArrayList<>();
+                hand.add(pc1);
+                p.setHand(hand);
+            }
+        } else {
+            while (ip.hasNext()) {
+                p = ip.next();
+                Card pc1 = deck.remove();
+                Card pc2 = deck.remove();
+                Card pc3 = deck.remove();
+                ArrayList<Card> hand = new ArrayList<>();
+                hand.add(pc1);
+                hand.add(pc2);
+                hand.add(pc3);
+                p.setHand(hand);
+            }
+        }
+    }
+
+    private void setVictoryCards() {
+        Iterator<Player> ip = playerList.iterator();
+        Player p;
+        while (ip.hasNext()) {
+            p = ip.next();
+            Card pc = deck.remove();
+            p.setVictoryCard(pc);
+        }
     }
 
     protected void startGame() {
@@ -90,8 +156,27 @@ public class PlayingModel extends Observable{
     protected void calculeAndShowScore() {
         for (Player player : playerList) {  //Calcul du score pour chaque joueur (pas fini)
             board.accept(new ScoreCalculator(), player);
-            System.out.println("\n Score du joueur "+player.getPseudo()+" : "+player.getScore());
+            System.out.println("\n Score du joueur " + player.getPseudo() + " : " + player.getScore());
         }
     }
 
+    public boolean isGameFinished() {
+        return deck.size() == 0;
+    }
+
+    public boolean isFirstRound() {
+        return isFirstRound;
+    }
+
+    public boolean isFirstTurn() {
+        return isFirstTurn;
+    }
+
+    public void setIsFirstTurn(boolean isFirstTurn) {
+        this.isFirstTurn = isFirstTurn;
+    }
+
+    public void setIsFirstRound(boolean isFirstRound) {
+        this.isFirstRound = isFirstRound;
+    }
 }

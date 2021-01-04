@@ -1,28 +1,27 @@
 package view;
 
-import model.AbstractBoard;
 import model.Card;
 import model.Player;
+import model.PlayingModel;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Queue;
 
 public class AdvancedShapeUp extends ShapeUp {
-    public AdvancedShapeUp(List<Player> players, AbstractBoard board, Queue<Card> deck) {
-        super(players, board, deck);
+    public AdvancedShapeUp(PlayingModel pm) {
+        super(pm);
     }
 
     protected void startGame() {
-        Iterator<Player> ip = playerList.iterator();
+        Iterator<Player> ip = pm.getPlayerList().iterator();
         int i = 1;
         Player p;
         while (ip.hasNext()) {
             p = ip.next();
-            Card pc1 = deck.remove();
-            Card pc2 = deck.remove();
-            Card pc3 = deck.remove();
+            Card pc1 = pm.getDeck().remove();
+            Card pc2 = pm.getDeck().remove();
+            Card pc3 = pm.getDeck().remove();
             ArrayList<Card> hand = new ArrayList<>();
             hand.add(pc1);
             hand.add(pc2);
@@ -30,14 +29,14 @@ public class AdvancedShapeUp extends ShapeUp {
             p.setHand(hand);
             i++;
         }
-        deck.remove(); // hidden card
+        pm.getDeck().remove(); // hidden card
         startRound();
-        isFirstRound = false;
+        pm.setIsFirstRound(false);
         while (!isGameFinished()) {
             startRound();
         }
 
-        for (Player player : playerList) {
+        for (Player player : pm.getPlayerList()) {
             player.setVictoryCard(player.getHand().get(0));
         }
 
@@ -46,19 +45,19 @@ public class AdvancedShapeUp extends ShapeUp {
     @Override
     protected void startRound() {
         for (Player p :
-                playerList) {
+                pm.getPlayerList()) {
             if (!isGameFinished()) {
                 System.out.println("\nA vous de jouer " + p.getPseudo());
                 Card toPlay = determineWhichCardToPlay(p);
                 startPlayerTurn(p, toPlay);
                 System.out.println("\nPlateau de jeu :\n");
-                board.showBoard();
+                pm.getBoard().showBoard();
                 System.out.print('\n');
             }
         }
         if (isGameFinished()) {
             System.out.println("\nPlateau de jeu :\n");
-            board.showBoard();
+            pm.getBoard().showBoard();
         }
     }
 
@@ -76,25 +75,24 @@ public class AdvancedShapeUp extends ShapeUp {
             default:
                 break;
         }
-        if (deck.size() != 0) {
-            hand.add(deck.remove());
+        if (pm.getDeck().size() != 0) {
+            hand.add(pm.getDeck().remove());
             p.setHand(hand);
         }
-        String messageWhichCard = "Quelle carte de votre main souhaitez-vous jouer ? ("+modulaire+")";
+        String messageWhichCard = "Quelle carte de votre main souhaitez-vous jouer ? (" + modulaire + ")";
         return hand.remove(p.askHandChoice(messageWhichCard));
     }
 
-    @Override
     protected boolean isGameFinished() {
-        int maxPlayer = playerList.size();
+        int maxPlayer = pm.getPlayerList().size();
         int finishPlayer = 0;
-        for (Player p:
-             playerList) {
+        for (Player p :
+                pm.getPlayerList()) {
             if (p.getHand().size() == 1) {
                 finishPlayer++;
             }
         }
-        return deck.size() == 0 && maxPlayer == finishPlayer;
+        return pm.getDeck().size() == 0 && maxPlayer == finishPlayer;
     }
 
     @Override
@@ -104,8 +102,8 @@ public class AdvancedShapeUp extends ShapeUp {
     }
 
     private void showHand(Player p) {
-        System.out.println("Main du joueur "+p.getPseudo()+" :");
-        for (Card c:
+        System.out.println("Main du joueur " + p.getPseudo() + " :");
+        for (Card c :
                 p.getHand()) {
             System.out.print(c.toASCIIArt());
         }
