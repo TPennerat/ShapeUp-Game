@@ -218,8 +218,6 @@ public class PlayingModel extends Observable {
             }
             vrp.autoPlay(MODE, board, this, card);
             p.removeCardHand(card);
-            card = deck.remove();
-            p.addCardHand(card);
             determineNextPlayer();
         } else {
             ACTUAL_STATE = WAITING_STATE;
@@ -257,5 +255,11 @@ public class PlayingModel extends Observable {
                     board.getPotentialMaximumY());
         }
         board.placeCard(res,toPlay);
+    }
+
+    public void calculScore() {
+        for (Player player : playerList) {  //Calcul du score pour chaque joueur
+            board.accept(new ScoreCalculator(), player);
+        }
     }
 }

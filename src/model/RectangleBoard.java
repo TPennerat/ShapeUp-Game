@@ -100,7 +100,7 @@ public class RectangleBoard extends AbstractBoard {
                             sug.selectBoardCard(newCard, c);
                         }
                     });
-                    board.add(newCard, newCords.get(coord).getPosX(), newCords.get(coord).getPosY());
+                    board.add(newCard, newCords.get(coord).getPosY(), newCords.get(coord).getPosX());
                 }
             }
         }

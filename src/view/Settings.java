@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public class Settings {
     public JPanel panel1;
@@ -34,18 +35,27 @@ public class Settings {
         nbRealPlayer.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                labelJ1.setVisible(false);
+                playerName1.setVisible(false);
                 labelJ2.setVisible(false);
                 playerName2.setVisible(false);
                 labelJ3.setVisible(false);
                 playerName3.setVisible(false);
                 if (nbRealPlayer.getSelectedItem() == "2") {
+                    labelJ1.setVisible(true);
+                    playerName1.setVisible(true);
                     labelJ2.setVisible(true);
                     playerName2.setVisible(true);
                 } else if (nbRealPlayer.getSelectedItem() == "3") {
+                    labelJ1.setVisible(true);
+                    playerName1.setVisible(true);
                     labelJ2.setVisible(true);
                     playerName2.setVisible(true);
                     labelJ3.setVisible(true);
                     playerName3.setVisible(true);
+                } else if (nbRealPlayer.getSelectedItem() == "1") {
+                    labelJ1.setVisible(true);
+                    playerName1.setVisible(true);
                 }
             }
         });
@@ -69,26 +79,28 @@ public class Settings {
     private List<Player> createPlayerList() {
         List<Player> players = new LinkedList<>();
         String playerName;
-        for (int i = 0; i < nbRealPlayer.getSelectedIndex()+1; i++) {
-            switch (i) {
-                case 0:
-                    playerName = playerName1.getText();
-                    break;
-                case 1:
-                    playerName = playerName2.getText();
-                    break;
-                case 2:
-                    playerName = playerName3.getText();
-                    break;
-                default:
-                    playerName = "Impossible";
-                    System.err.println("Impossible");
-                    break;
+        if (nbRealPlayer.getSelectedItem() != "0") {
+            for (int i = 0; i < nbRealPlayer.getSelectedIndex(); i++) {
+                switch (i) {
+                    case 0:
+                        playerName = playerName1.getText();
+                        break;
+                    case 1:
+                        playerName = playerName2.getText();
+                        break;
+                    case 2:
+                        playerName = playerName3.getText();
+                        break;
+                    default:
+                        playerName = "Impossible";
+                        System.err.println("Impossible");
+                        break;
+                }
+                players.add(new RealPlayer(playerName));
             }
-            players.add(new RealPlayer(playerName));
         }
-        int nbVirtualPlayer = Integer.parseInt((String) nbPlayer.getSelectedItem()) - Integer.parseInt((String) nbRealPlayer.getSelectedItem());
-            for (int i = 0; i < nbVirtualPlayer; i++) {
+        int nbVirtualPlayer = Integer.parseInt((String) Objects.requireNonNull(nbPlayer.getSelectedItem())) - Integer.parseInt((String) Objects.requireNonNull(nbRealPlayer.getSelectedItem()));
+        for (int i = 0; i < nbVirtualPlayer; i++) {
                 playerName = "Robot " + (i + 1);
                 PlayingStrategy ps;
                 ps = new PlayingStrategy1();

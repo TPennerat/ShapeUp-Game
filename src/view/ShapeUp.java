@@ -31,15 +31,28 @@ public class ShapeUp implements Observer {
         this.gc = gc;
     }
 
-    public static void launcher(PlayingModel pm, GameController gc) {
-        ShapeUp game = new ShapeUp(pm,gc);
-        pm.addObserver(game);
+    public static void main(String[] args) {
+        PlayingModel pm = new PlayingModel();
+        GameController gc = new GameController(pm);
+        Thread thread = new Thread(() -> {
+            ShapeUpGra window = new ShapeUpGra(pm, gc);
+            pm.addObserver(window);
+            window.frame.setVisible(true);
+        });
+        thread.start();
+        ShapeUp su = new ShapeUp(pm, gc);
+        pm.addObserver(su);
+        su.launcher(pm, gc);
+    }
+
+    public void launcher(PlayingModel pm, GameController gc) {
         System.out.println("Bienvenue dans ShapeUp !"); // salutation du joueur
         System.out.println("Préparation du paquet de cartes...");
         System.out.println("Paquet de cartes prêt.");
         List<Player> players = askPlayersInfo();
         AbstractBoard board = askBoardInfo();
-        game = askAdvancedShapeUp(pm, gc);
+        ShapeUp game = askAdvancedShapeUp(pm, gc);
+        pm.addObserver(game);
         if (game instanceof AdvancedShapeUp) {
             pm.setVariables(players, board, PlayingModel.ADVANCED_MODE);
         } else {

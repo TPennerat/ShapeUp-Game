@@ -75,9 +75,11 @@
             </constraints>
             <properties>
               <model>
+                <item value="0"/>
                 <item value="1"/>
                 <item value="2"/>
               </model>
+              <selectedIndex value="1"/>
             </properties>
           </component>
           <component id="d5e51" class="javax.swing.JRadioButton" binding="modeNormalRadioButton" default-binding="true">
@@ -103,6 +105,7 @@
             </constraints>
             <properties>
               <text value="Nom du joueur 1"/>
+              <visible value="true"/>
             </properties>
           </component>
           <component id="469fa" class="javax.swing.JTextField" binding="playerName1">

@@ -3,6 +3,7 @@ package view;
 import controller.GameController;
 import model.Card;
 import model.Coord;
+import model.Player;
 import model.PlayingModel;
 
 import javax.swing.*;
@@ -13,13 +14,15 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
 
 public class ShapeUpGra implements Observer {
     private static final String REGEX_COORD = "-?[0-9]+,-?[0-9]+";
-    private JFrame frame;
+    public JFrame frame;
     public JPanel panel1;
     private JPanel controlAction;
     private JPanel hand;
@@ -45,16 +48,18 @@ public class ShapeUpGra implements Observer {
     public static void main(String[] args) {
         PlayingModel pm = new PlayingModel();
         GameController gc = new GameController(pm);
-        EventQueue.invokeLater(() -> {
-            try {
+        /*Thread thread = new Thread(() -> {
+            pm.addObserver(new ShapeUp(pm, gc));
+        });
+        thread.start();*/
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
                 ShapeUpGra window = new ShapeUpGra(pm, gc);
                 pm.addObserver(window);
                 window.frame.setVisible(true);
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         });
-        ShapeUp.launcher(pm, gc);
     }
 
     public ShapeUpGra(PlayingModel pm, GameController gc) {
@@ -85,8 +90,8 @@ public class ShapeUpGra implements Observer {
     }
 
     public void playingPhase() {
-        frame.removeAll();
-        frame.add(panel1);
+        frame.getContentPane().removeAll();
+        frame.getContentPane().add(panel1);
         frame.revalidate();
         frame.repaint();
         playButton.addActionListener(e -> tryToPlay());
@@ -200,8 +205,17 @@ public class ShapeUpGra implements Observer {
     }
 
     private void displayFinalScreen() {
+        pm.calculScore();
         panel1.removeAll();
-        panel1.add(new JLabel("fin"));
+        panel1.setLayout(new FlowLayout());
+        for (Player p:
+             pm.getPlayerList()) {
+            panel1.add(new JLabel(p.getPseudo()+" a eu : "+p.getScore()));
+        }
+        frame.getContentPane().removeAll();
+        frame.getContentPane().add(panel1);
+        frame.revalidate();
+        frame.repaint();
     }
 
     private void hidePlay() {
