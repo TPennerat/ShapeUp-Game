@@ -1,5 +1,8 @@
 package model;
 
+import view.ShapeUpGra;
+
+import javax.swing.*;
 import java.util.*;
 
 public class TriangleBoard extends AbstractBoard {
@@ -10,7 +13,7 @@ public class TriangleBoard extends AbstractBoard {
     }
 
     @Override
-    public void showBoard() {
+    public void showConsoleBoard() {
         Set<Coord> s = placedCards.keySet();
         List<Coord> l = new ArrayList<>(s);
         l.sort(Coord::compareTo);
@@ -22,9 +25,9 @@ public class TriangleBoard extends AbstractBoard {
             if (lastY != y) {
                 System.out.print('\n');
             }
-            if (x != getRealMinimunX()) {
+            if (x != getRealMinimumX()) {
                 if (lastY != y) {
-                    for (int i = getRealMinimunX(); i < x; i++) {
+                    for (int i = getRealMinimumX(); i < x; i++) {
                         printSpace();
                     }
                 } else {
@@ -48,10 +51,15 @@ public class TriangleBoard extends AbstractBoard {
     }
 
     @Override
+    public JPanel renderGraphicBoard(ShapeUpGra sug) {
+        return null;
+    }
+
+    @Override
     public int getPotentialMinimumX() {
-        if (getRealMaximumX()-getRealMinimunX() == 4)
-            return getRealMinimunX();
-        return getRealMinimunX() - 1;
+        if (getRealMaximumX()- getRealMinimumX() == 4)
+            return getRealMinimumX();
+        return getRealMinimumX() - 1;
     }
 
     @Override
@@ -63,7 +71,7 @@ public class TriangleBoard extends AbstractBoard {
 
     @Override
     public int getPotentialMaximumX() {
-        if (getRealMaximumX()-getRealMinimunX() == 4)
+        if (getRealMaximumX()- getRealMinimumX() == 4)
             return getRealMaximumX();
         return getRealMaximumX() + 1;
     }

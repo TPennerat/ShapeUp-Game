@@ -1,5 +1,6 @@
 package view;
 
+import controller.GameController;
 import model.*;
 
 import javax.swing.*;
@@ -25,11 +26,10 @@ public class Settings {
     private JComboBox<String> comboBox1;
     private JComboBox<String> boardType;
 
-    public Settings(ShapeUpGra sug, PlayingModel pm) {
+    public Settings(ShapeUpGra sug, GameController gc) {
         validerButton.addActionListener(e -> {
             errorLabelMessage.setVisible(false);
-            pm.setVariables(createPlayerList(), createBoard(), determinePlayingMode());
-            sug.playingPhase();
+            gc.startGame(createPlayerList(), createBoard(), determinePlayingMode());
         });
         nbRealPlayer.addActionListener(new ActionListener() {
             @Override

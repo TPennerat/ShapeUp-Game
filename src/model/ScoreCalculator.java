@@ -12,7 +12,7 @@ public class ScoreCalculator implements InterfaceVisitor {
 		Shape victoryshape = victoryCard.getShape();
 		boolean victoryfilled = victoryCard.isFilled();
 
-		int minX = board.getRealMinimunX(); //Recupere les bornes du plateau
+		int minX = board.getRealMinimumX(); //Recupere les bornes du plateau
 		int maxX = board.getRealMaximumX();
 		int minY = board.getRealMinimumY();
 		int maxY = board.getRealMaximumY();

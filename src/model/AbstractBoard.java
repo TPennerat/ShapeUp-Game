@@ -1,5 +1,8 @@
 package model;
 
+import view.ShapeUpGra;
+
+import javax.swing.*;
 import java.util.*;
 
 public abstract class AbstractBoard {
@@ -42,16 +45,18 @@ public abstract class AbstractBoard {
                 isAtLeastOneAdjacentCard = coord.isCoordAdjacent(c);
             }
         }
-        return !isAtLeastOneAdjacentCard;
+        return isAtLeastOneAdjacentCard;
     }
 
-    public abstract void showBoard();
+    public abstract void showConsoleBoard();
+
+    public abstract JPanel renderGraphicBoard(ShapeUpGra sug);
 
     protected void printSpace() {
         System.out.print("     ");
     }
 
-    public int getRealMinimunX() {
+    public int getRealMinimumX() {
         List<Coord> l = toList();
         if (l.size() != 0) {
             int minX = l.get(0).getPosX();

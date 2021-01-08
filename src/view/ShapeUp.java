@@ -1,5 +1,6 @@
 package view;
 
+import controller.GameController;
 import model.*;
 
 import java.util.*;
@@ -7,9 +8,11 @@ import java.util.*;
 public class ShapeUp implements Observer {
 
     protected PlayingModel pm;
+    protected GameController gc;
 
-    public ShapeUp(PlayingModel pm) {
+    public ShapeUp(PlayingModel pm, GameController gc) {
         this.pm = pm;
+        this.gc = gc;
     }
 
     public void launcher() {
@@ -18,11 +21,11 @@ public class ShapeUp implements Observer {
         System.out.println("Paquet de cartes prêt.");
         List<Player> players = askPlayersInfo();
         AbstractBoard board = askBoardInfo();
-        ShapeUp game = askAdvancedShapeUp(pm);
+        ShapeUp game = askAdvancedShapeUp(pm, gc);
         // start game ?
     }
 
-    private static ShapeUp askAdvancedShapeUp(PlayingModel pm) {
+    private static ShapeUp askAdvancedShapeUp(PlayingModel pm, GameController gc) {
         String messageVersion = "A quel version de ShapeUp! souhaitez-vous jouer ? (1 : normal; 2 : advanced)";
         int nbVersion = askNumber(messageVersion);
         while (nbVersion > 2 || nbVersion < 1) {
@@ -30,9 +33,9 @@ public class ShapeUp implements Observer {
             nbVersion = askNumber(messageVersion);
         }
         if (nbVersion == 1) {
-            return  new ShapeUp(pm);
+            return  new ShapeUp(pm,gc);
         } else {
-            return new AdvancedShapeUp(pm);
+            return new AdvancedShapeUp(pm,gc);
         }
     }
 
@@ -51,13 +54,13 @@ public class ShapeUp implements Observer {
                 System.out.println(card.toASCIIArt());
                 startPlayerTurn(p, card);
                 System.out.println("\nPlateau de jeu :\n");
-                pm.getBoard().showBoard();
+                pm.getBoard().showConsoleBoard();
                 System.out.print('\n');
             }
         }
         if (pm.isGameFinished()) {
             System.out.println("\nPlateau de jeu :\n");
-            pm.getBoard().showBoard();
+            pm.getBoard().showConsoleBoard();
         }
     }
 
@@ -68,7 +71,7 @@ public class ShapeUp implements Observer {
 
     protected Coord move(Player p, int action) {
         if (action == Player.CARD_CHOSING) {
-            return p.move(pm.getBoard().getRealMinimunX(), pm.getBoard().getRealMinimumY(), pm.getBoard().getRealMaximumX(),
+            return p.move(pm.getBoard().getRealMinimumX(), pm.getBoard().getRealMinimumY(), pm.getBoard().getRealMaximumX(),
                     pm.getBoard().getRealMaximumY(), action);
         } else if (action == Player.CARD_DEPLACEMENT) {
             return p.move(pm.getBoard().getPotentialMinimumX(), pm.getBoard().getPotentialMinimumY(), pm.getBoard().getPotentialMaximumX(),

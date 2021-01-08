@@ -1,5 +1,6 @@
 package model;
 
+import javax.crypto.spec.DESedeKeySpec;
 import java.util.*;
 
 public class PlayingModel extends Observable {
@@ -20,8 +21,8 @@ public class PlayingModel extends Observable {
     private int MODE;
     public static final int NORMAL_MODE = 0;
     public static final int ADVANCED_MODE = 1;
-    protected boolean isFirstRound;
-    protected boolean isFirstTurn;
+    protected boolean firstRound;
+    protected boolean firstTurn;
 
     public int getCurrentPlayerIndex() {
         return currentPlayerIndex;
@@ -33,21 +34,22 @@ public class PlayingModel extends Observable {
 
     private int currentPlayerIndex;
 
-    public static int getActualState() {
+    public int getActualState() {
         return ACTUAL_STATE;
     }
 
-    public static int ACTUAL_STATE;
+    public int ACTUAL_STATE;
     public static final int SETTING_STATE = 0;
     public static final int PLAYING_STATE = 1;
     public static final int MOVING_STATE = 2;
     public static final int WAITING_STATE = 3;
+    public static final int FINISHED_STATE = 4;
 
     public PlayingModel() {
         deck = createCards();
         ACTUAL_STATE = SETTING_STATE;
-        isFirstRound = true;
-        isFirstTurn = true;
+        firstRound = true;
+        firstTurn = true;
         currentPlayerIndex = 0;
     }
 
@@ -161,22 +163,105 @@ public class PlayingModel extends Observable {
     }
 
     public boolean isGameFinished() {
-        return deck.size() == 0;
+        if (MODE == ADVANCED_MODE) {
+            int maxPlayer = playerList.size();
+            int finishPlayer = 0;
+            for (Player p :
+                    playerList) {
+                if (p.getHand().size() == 1) {
+                    finishPlayer++;
+                }
+            }
+            return playerList.size() == 0 && maxPlayer == finishPlayer;
+        } else {
+            return deck.size() == 0;
+        }
     }
 
     public boolean isFirstRound() {
-        return isFirstRound;
+        return firstRound;
     }
 
     public boolean isFirstTurn() {
-        return isFirstTurn;
+        return firstTurn;
     }
 
     public void setIsFirstTurn(boolean isFirstTurn) {
-        this.isFirstTurn = isFirstTurn;
+        this.firstTurn = isFirstTurn;
     }
 
     public void setIsFirstRound(boolean isFirstRound) {
-        this.isFirstRound = isFirstRound;
+        this.firstRound = isFirstRound;
+    }
+
+    public void play(Coord coord, Card card) {
+        board.placeCard(coord, card);
+        Player p = playerList.get(currentPlayerIndex);
+        p.removeCardHand(card);
+        ACTUAL_STATE = PLAYING_STATE;
+        setChanged();
+        notifyObservers();
+    }
+
+    public void determineNextPlayer() {
+        if (firstTurn) {
+            firstTurn = false;
+        }
+        playerList.get(currentPlayerIndex).addCardHand(deck.remove());
+        if (currentPlayerIndex == playerList.size() - 1) {
+            currentPlayerIndex = 0;
+            if (firstRound) {
+                firstRound = false;
+            }
+        } else {
+            currentPlayerIndex++;
+        }
+        if (isGameFinished()) {
+            ACTUAL_STATE = FINISHED_STATE;
+        } else {
+            IATryToPlay();
+            ACTUAL_STATE = WAITING_STATE;
+        }
+        setChanged();
+        notifyObservers();
+    }
+
+    private void IATryToPlay() {
+        Player p = playerList.get(currentPlayerIndex);
+        if (p instanceof VirtualPlayer) {
+            VirtualPlayer vrp = (VirtualPlayer) p;
+            Card card;
+            if (MODE == NORMAL_MODE) {
+                card = p.getHand().get(0);
+            } else {
+                card = p.getHand().get(p.askHandChoice(""));
+            }
+            vrp.autoPlay(MODE, board, this, card);
+            determineNextPlayer();
+        }
+    }
+
+    public void move(VirtualPlayer p) {
+        Coord res = p.move(board.getPotentialMinimumX(), board.getPotentialMinimumY(),
+                board.getPotentialMaximumX(),board.getRealMaximumY(), 0);
+        while (!board.isCardCorrectlyPlaced(res)) {
+            res = p.move(board.getPotentialMinimumX(), board.getPotentialMinimumY(),
+                    board.getPotentialMaximumX(),board.getRealMaximumY(), 0);
+        }
+        board.moveCard(res, p.chooseMovingCard(board));
+    }
+
+    public void move(Coord coord, Card c) {
+        board.moveCard(coord, c);
+    }
+
+    public Coord play(VirtualPlayer p) {
+        Coord res = p.play(board.getPotentialMinimumX(), board.getPotentialMinimumY(), board.getPotentialMaximumX(),
+                board.getPotentialMaximumY());
+        while (!board.isCardCorrectlyPlaced(res)) {
+            res = p.play(board.getPotentialMinimumX(), board.getPotentialMinimumY(), board.getPotentialMaximumX(),
+                    board.getPotentialMaximumY());
+        }
+        return res;
     }
 }

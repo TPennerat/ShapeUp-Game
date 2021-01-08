@@ -1,7 +1,7 @@
 package model;
 
 public class VirtualPlayer extends Player {
-    private PlayingStrategy playingStrategy;
+    private final PlayingStrategy playingStrategy;
 
     public VirtualPlayer(String pseudo, PlayingStrategy p) {
         super(pseudo);
@@ -10,8 +10,7 @@ public class VirtualPlayer extends Player {
 
     @Override
     public Coord play(int minX, int minY, int maxX, int maxY) {
-        return
-                playingStrategy.play(minX, minY, maxX, maxY);
+        return playingStrategy.play(minX, minY, maxX, maxY);
     }
 
     @Override
@@ -32,5 +31,35 @@ public class VirtualPlayer extends Player {
     @Override
     public int askHandChoice(String messageWhichCard) {
         return playingStrategy.handChoice();
+    }
+
+    public Card chooseMovingCard(AbstractBoard board) {
+        return playingStrategy.chooseMovingCard(board);
+    }
+
+    public Coord autoPlay(int playingMode, AbstractBoard board, PlayingModel pm, Card card) {
+        Coord res = null;
+        if (playingMode == PlayingModel.NORMAL_MODE) {
+            if (pm.isFirstTurn()) {
+                if (pm.isFirstTurn()) {
+                    pm.setIsFirstTurn(false);
+                }
+                pm.getBoard().placeCard(pm.play(this), card);
+            } else {
+                int choice = askChoice();
+                if (choice == 1) {
+                    pm.board.placeCard(pm.play(this), card);
+                    if (askMoveChoice() == 1) {
+                        pm.move(this);
+                    }
+                } else {
+                    pm.move(this);
+                    pm.board.placeCard(pm.play(this), card);
+                }
+            }
+        } else {
+            // TODO ADVANCED MODE
+        }
+        return res;
     }
 }
