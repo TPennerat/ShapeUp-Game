@@ -1,5 +1,8 @@
 package model;
 
+import view.ShapeUpGra;
+
+import javax.swing.*;
 import java.util.*;
 
 public abstract class AbstractBoard {
@@ -42,16 +45,18 @@ public abstract class AbstractBoard {
                 isAtLeastOneAdjacentCard = coord.isCoordAdjacent(c);
             }
         }
-        return !isAtLeastOneAdjacentCard;
+        return isAtLeastOneAdjacentCard;
     }
 
-    public abstract void showBoard();
+    public abstract void showConsoleBoard();
+
+    public abstract JPanel renderGraphicBoard(ShapeUpGra sug);
 
     protected void printSpace() {
         System.out.print("     ");
     }
 
-    public int getRealMinimunX() {
+    public int getRealMinimumX() {
         List<Coord> l = toList();
         if (l.size() != 0) {
             int minX = l.get(0).getPosX();
@@ -125,6 +130,14 @@ public abstract class AbstractBoard {
     public abstract int getPotentialMaximumY();
 
     public void moveCard(Coord nouvelleCoord, Card aDeplacer) {
+        Coord ancienneCoord = null;
+        for (Coord c:
+        placedCards.keySet()) {
+            if (placedCards.get(c).equals(aDeplacer)) {
+                ancienneCoord = c;
+            }
+        }
+        placedCards.remove(ancienneCoord);
         placeCard(nouvelleCoord, aDeplacer);
     }
 
@@ -137,4 +150,6 @@ public abstract class AbstractBoard {
     public void accept(InterfaceVisitor iv, Player p) {
         p.setScore(iv.visitBoard(this, p.getVictoryCard()));
     }
+
+    public abstract boolean isCardMoveable(Coord coord, Card card);
 }

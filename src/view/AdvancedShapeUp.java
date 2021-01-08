@@ -1,16 +1,18 @@
 package view;
 
+import controller.GameController;
 import model.Card;
 import model.Player;
 import model.PlayingModel;
+import model.RealPlayer;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 public class AdvancedShapeUp extends ShapeUp {
-    public AdvancedShapeUp(PlayingModel pm) {
-        super(pm);
+    public AdvancedShapeUp(PlayingModel pm, GameController gc) {
+        super(pm,gc);
     }
 
     protected void startGame() {
@@ -30,10 +32,8 @@ public class AdvancedShapeUp extends ShapeUp {
             i++;
         }
         pm.getDeck().remove(); // hidden card
-        startRound();
         pm.setIsFirstRound(false);
-        while (!isGameFinished()) {
-            startRound();
+        while (!pm.isGameFinished()) {
         }
 
         for (Player player : pm.getPlayerList()) {
@@ -43,21 +43,18 @@ public class AdvancedShapeUp extends ShapeUp {
     }
 
     @Override
-    protected void startRound() {
-        for (Player p :
-                pm.getPlayerList()) {
-            if (!isGameFinished()) {
+    protected void startTurn() {
+        RealPlayer p = (RealPlayer) pm.getPlayerList().get(pm.getCurrentPlayerIndex());
+            if (!pm.isGameFinished()) {
                 System.out.println("\nA vous de jouer " + p.getPseudo());
                 Card toPlay = determineWhichCardToPlay(p);
-                startPlayerTurn(p, toPlay);
                 System.out.println("\nPlateau de jeu :\n");
-                pm.getBoard().showBoard();
+                pm.getBoard().showConsoleBoard();
                 System.out.print('\n');
             }
-        }
-        if (isGameFinished()) {
+        if (pm.isGameFinished()) {
             System.out.println("\nPlateau de jeu :\n");
-            pm.getBoard().showBoard();
+            pm.getBoard().showConsoleBoard();
         }
     }
 
@@ -83,23 +80,6 @@ public class AdvancedShapeUp extends ShapeUp {
         return hand.remove(p.askHandChoice(messageWhichCard));
     }
 
-    protected boolean isGameFinished() {
-        int maxPlayer = pm.getPlayerList().size();
-        int finishPlayer = 0;
-        for (Player p :
-                pm.getPlayerList()) {
-            if (p.getHand().size() == 1) {
-                finishPlayer++;
-            }
-        }
-        return pm.getDeck().size() == 0 && maxPlayer == finishPlayer;
-    }
-
-    @Override
-    protected void startPlayerTurn(Player p, Card c) {
-
-        super.startPlayerTurn(p, c);
-    }
 
     private void showHand(Player p) {
         System.out.println("Main du joueur " + p.getPseudo() + " :");

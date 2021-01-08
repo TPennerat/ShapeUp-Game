@@ -1,5 +1,9 @@
 package model;
 
+import view.ShapeUpGra;
+
+import javax.swing.*;
+
 public class CircleBoard extends AbstractBoard {
 
     @Override
@@ -8,8 +12,13 @@ public class CircleBoard extends AbstractBoard {
     }
 
     @Override
-    public void showBoard() {
+    public void showConsoleBoard() {
 
+    }
+
+    @Override
+    public JPanel renderGraphicBoard(ShapeUpGra sug) {
+        return null;
     }
 
     @Override
@@ -30,5 +39,10 @@ public class CircleBoard extends AbstractBoard {
     @Override
     public int getPotentialMaximumY() {
         return 0;
+    }
+
+    @Override
+    public boolean isCardMoveable(Coord coord, Card card) {
+        return false;
     }
 }

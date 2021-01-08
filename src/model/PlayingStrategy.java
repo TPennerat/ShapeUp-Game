@@ -6,4 +6,5 @@ public interface PlayingStrategy {
     int askChoice();
     int askMoveChoice();
     int handChoice();
+    Card chooseMovingCard(AbstractBoard board);
 }

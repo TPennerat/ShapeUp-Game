@@ -1,7 +1,9 @@
 package model;
 
-public class PlayingStrategy2 implements PlayingStrategy {
+import java.util.ArrayList;
+import java.util.Random;
 
+public class PlayingStrategy2 implements PlayingStrategy {
 
     @Override
     public Coord play(int minX, int minY, int maxX, int maxY) {
@@ -330,5 +332,11 @@ public class PlayingStrategy2 implements PlayingStrategy {
     @Override
     public int handChoice() {
         return 1;
+    }
+
+    @Override
+    public Card chooseMovingCard(AbstractBoard board) {
+        ArrayList<Card> cards = new ArrayList<>(board.getPlacedCards().values());
+        return cards.get(0);
     }
 }

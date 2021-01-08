@@ -64,7 +64,6 @@ public class Coord implements Comparable{
         
 		int soustracX =  x - this.posX;
 		int soustracY =  y - this.posY;
-
         return (soustracX == 0 && soustracY == 1) ||
                 (soustracX == 1 && soustracY == 0) ||
                 (soustracX == -1 && soustracY == 0) ||
@@ -96,9 +95,9 @@ public class Coord implements Comparable{
         int soustracX =  x - this.posX;
         int soustracY =  y - this.posY;
         if (soustracY >= 1) {
-            return 1;
-        } else if (soustracY <= -1) {
             return -1;
+        } else if (soustracY <= -1) {
+            return 1;
         } else {
             if (soustracX >= 1) {
                 return -1;
@@ -108,5 +107,13 @@ public class Coord implements Comparable{
                     return 0;
                 }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Coord{" +
+                "posX=" + posX +
+                ", posY=" + posY +
+                '}';
     }
 }

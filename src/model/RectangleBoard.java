@@ -1,17 +1,29 @@
 package model;
 
+import view.ShapeUpGra;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.List;
 
 public class RectangleBoard extends AbstractBoard {
 
     @Override
     public boolean isCardCorrectlyPlaced(Coord c) {
-        return isAtLeastOneAdjacentCard(c) || isCoordAlreadyExisting(c);
+        if (placedCards.isEmpty()) {
+            return true;
+        }
+        return isAtLeastOneAdjacentCard(c) && !isCoordAlreadyExisting(c);
     }
 
 
     @Override
-    public void showBoard() {
+    public void showConsoleBoard() {
         Set<Coord> s = placedCards.keySet();
         List<Coord> l = new ArrayList<>(s);
         l.sort(Coord::compareTo);
@@ -25,9 +37,9 @@ public class RectangleBoard extends AbstractBoard {
                 System.out.print('\n');
                 System.out.print(y+" ");
             }
-            if (x != getRealMinimunX()) {
+            if (x != getRealMinimumX()) {
                 if (lastY != y) {
-                    for (int i = getRealMinimunX(); i < x; i++) {
+                    for (int i = getRealMinimumX(); i < x; i++) {
                         printSpace();
                     }
                 } else {
@@ -49,17 +61,57 @@ public class RectangleBoard extends AbstractBoard {
             lastY = y;
         }
         System.out.println();
-        for (int i = getRealMinimunX(); i<=getRealMaximumX(); i++) {
+        for (int i = getRealMinimumX(); i<=getRealMaximumX(); i++) {
             System.out.print("  "+i+"  ");
         }
         System.out.println();
     }
 
     @Override
+    public JPanel renderGraphicBoard(ShapeUpGra sug) {
+        Set<Coord> s = getPlacedCards().keySet();
+        List<Coord> l = new ArrayList<>(s);
+        l.sort(Coord::compareTo);
+        HashMap<Coord, Coord> newCords = new HashMap<>();
+        for (Coord coord:
+             l) {
+            int newCoordX = coord.getPosX()+Math.abs(getRealMinimumX());
+            int newCoordY = coord.getPosY()+Math.abs(getRealMinimumY());
+            newCords.put(coord, new Coord(newCoordX,newCoordY));
+        }
+        int xMappedCoord = Math.abs(getRealMinimumX()) + Math.abs(getRealMaximumX()) + 1;
+        int yMappedCoord = Math.abs(getRealMinimumY()) + Math.abs(getRealMaximumY()) + 1;
+        JPanel board = new JPanel(new GridLayout(yMappedCoord, xMappedCoord));
+        for (int i=getRealMinimumY(); i<=getRealMaximumY(); i++) {
+            for (int j=getRealMinimumX(); j<=getRealMaximumX(); j++) {
+                Coord coord = new Coord(j,i);
+                Card c = placedCards.get(coord);
+                if (c == null) {
+                    JPanel jp = new JPanel();
+                    jp.setBorder(BorderFactory.createLineBorder(Color.gray, 2));
+                    board.add(jp);
+                } else {
+                    BufferedImage img = c.getImg();
+                    JLabel newCard = new JLabel(new ImageIcon(img.getScaledInstance(img.getWidth() / (8+Math.abs(getRealMaximumX())),
+                            img.getHeight() / (8+Math.abs(getRealMaximumY())), Image.SCALE_SMOOTH)));
+                    newCard.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mousePressed(MouseEvent e) {
+                            sug.selectBoardCard(newCard, c);
+                        }
+                    });
+                    board.add(newCard, newCords.get(coord).getPosX(), newCords.get(coord).getPosY());
+                }
+            }
+        }
+        return board;
+    }
+
+    @Override
     public int getPotentialMinimumX() {
-        if (getRealMaximumX()-getRealMinimunX() == 4)
-            return getRealMinimunX();
-        return getRealMinimunX() - 1;
+        if (getRealMaximumX()- getRealMinimumX() == 4)
+            return getRealMinimumX();
+        return getRealMinimumX() - 1;
     }
 
     @Override
@@ -71,7 +123,7 @@ public class RectangleBoard extends AbstractBoard {
 
     @Override
     public int getPotentialMaximumX() {
-        if (getRealMaximumX()-getRealMinimunX() == 4)
+        if (getRealMaximumX()- getRealMinimumX() == 4)
             return getRealMaximumX();
         return getRealMaximumX() + 1;
     }
@@ -83,4 +135,23 @@ public class RectangleBoard extends AbstractBoard {
         return getRealMaximumY() + 1;
     }
 
+    @Override
+    public boolean isCardMoveable(Coord coord, Card card) {
+        Map<Coord, Card> clo = placedCards;
+        Coord ancienneCoord = null;
+        for (Coord c:
+                clo.keySet()) {
+            if (clo.get(c).equals(card)) {
+                ancienneCoord = c;
+            }
+        }
+        clo.remove(ancienneCoord);
+        if (isCardCorrectlyPlaced(coord)) {
+            clo.put(coord, card);
+            return true;
+        } else {
+            clo.put(ancienneCoord, card);
+            return false;
+        }
+    }
 }
