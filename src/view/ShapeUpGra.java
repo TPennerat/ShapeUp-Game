@@ -50,14 +50,11 @@ public class ShapeUpGra implements Observer {
                 ShapeUpGra window = new ShapeUpGra(pm, gc);
                 pm.addObserver(window);
                 window.frame.setVisible(true);
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
-        ShapeUp up = new ShapeUp(pm, gc);
-        pm.addObserver(up);
-        up.launcher();
+        ShapeUp.launcher(pm, gc);
     }
 
     public ShapeUpGra(PlayingModel pm, GameController gc) {
@@ -88,6 +85,10 @@ public class ShapeUpGra implements Observer {
     }
 
     public void playingPhase() {
+        frame.removeAll();
+        frame.add(panel1);
+        frame.revalidate();
+        frame.repaint();
         playButton.addActionListener(e -> tryToPlay());
         playCoord.addKeyListener(new KeyAdapter() {
             @Override
@@ -107,10 +108,6 @@ public class ShapeUpGra implements Observer {
             }
         });
         finishYourTurnButton.addActionListener(e -> gc.nextPlayer());
-        frame.getContentPane().removeAll();
-        frame.getContentPane().add(panel1);
-        frame.revalidate();
-        frame.repaint();
     }
 
     private void tryToPlay() {
@@ -152,7 +149,7 @@ public class ShapeUpGra implements Observer {
                 int x = Integer.parseInt(split[0]);
                 int y = Integer.parseInt(split[1]);
                 Coord c = new Coord(x, y);
-                if (pm.getBoard().isCardCorrectlyPlaced(c)) {
+                if (pm.getBoard().isCardCorrectlyPlaced(c) && pm.getBoard().isCardMoveable(c, selectedBoardCard)) {
                     gc.move(c, selectedBoardCard);
                     selectedBoardCard = null;
                 } else {
@@ -181,6 +178,7 @@ public class ShapeUpGra implements Observer {
                     showMove();
                 }
                 updateVictoryCardText();
+                finishYourTurnButton.setEnabled(false);
                 break;
             case PlayingModel.PLAYING_STATE:
                 hidePlay();
@@ -202,7 +200,8 @@ public class ShapeUpGra implements Observer {
     }
 
     private void displayFinalScreen() {
-        // TODO final screen
+        panel1.removeAll();
+        panel1.add(new JLabel("fin"));
     }
 
     private void hidePlay() {

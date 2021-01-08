@@ -91,11 +91,12 @@ public class PlayingModel extends Observable {
         board = b;
         playerList = lp;
         MODE = mode;
-        ACTUAL_STATE = WAITING_STATE;
-        setVictoryCards();
+        if (mode == NORMAL_MODE) {
+            setVictoryCards();
+        }
         setHands();
-        setChanged();
-        notifyObservers();
+        deck.remove(); // hidden card
+        IATryToPlay();
     }
 
     private void setHands() {
@@ -134,29 +135,9 @@ public class PlayingModel extends Observable {
         }
     }
 
-    protected void startGame() {
-        Iterator<Player> ip = playerList.iterator();
-        int i = 1;
-        Player p;
-        while (ip.hasNext()) {
-            p = ip.next();
-            System.out.println("Carte de victoire du joueur n°" + i);
-            Card pc = deck.remove();
-            p.setVictoryCard(pc);
-            System.out.println(pc.toASCIIArt());
-            i++;
-        }
-        deck.remove(); // hidden card
-        /*startRound();
-        isFirstRound = false;
-        while (!isGameFinished()) {
-            startRound();
-        }*/
-        calculeAndShowScore();
-    }
 
-    protected void calculeAndShowScore() {
-        for (Player player : playerList) {  //Calcul du score pour chaque joueur (pas fini)
+    public void calculeAndShowScore() {
+        for (Player player : playerList) {  //Calcul du score pour chaque joueur
             board.accept(new ScoreCalculator(), player);
             System.out.println("\n Score du joueur " + player.getPseudo() + " : " + player.getScore());
         }
@@ -172,9 +153,9 @@ public class PlayingModel extends Observable {
                     finishPlayer++;
                 }
             }
-            return playerList.size() == 0 && maxPlayer == finishPlayer;
+            return deck.isEmpty() && maxPlayer == finishPlayer;
         } else {
-            return deck.size() == 0;
+            return deck.isEmpty();
         }
     }
 
@@ -207,23 +188,22 @@ public class PlayingModel extends Observable {
         if (firstTurn) {
             firstTurn = false;
         }
-        playerList.get(currentPlayerIndex).addCardHand(deck.remove());
-        if (currentPlayerIndex == playerList.size() - 1) {
-            currentPlayerIndex = 0;
-            if (firstRound) {
-                firstRound = false;
-            }
-        } else {
-            currentPlayerIndex++;
-        }
         if (isGameFinished()) {
             ACTUAL_STATE = FINISHED_STATE;
+            setChanged();
+            notifyObservers();
         } else {
+            playerList.get(currentPlayerIndex).addCardHand(deck.remove());
+            if (currentPlayerIndex == playerList.size() - 1) {
+                currentPlayerIndex = 0;
+                if (firstRound) {
+                    firstRound = false;
+                }
+            } else {
+                currentPlayerIndex++;
+            }
             IATryToPlay();
-            ACTUAL_STATE = WAITING_STATE;
         }
-        setChanged();
-        notifyObservers();
     }
 
     private void IATryToPlay() {
@@ -237,7 +217,14 @@ public class PlayingModel extends Observable {
                 card = p.getHand().get(p.askHandChoice(""));
             }
             vrp.autoPlay(MODE, board, this, card);
+            p.removeCardHand(card);
+            card = deck.remove();
+            p.addCardHand(card);
             determineNextPlayer();
+        } else {
+            ACTUAL_STATE = WAITING_STATE;
+            setChanged();
+            notifyObservers();
         }
     }
 
@@ -248,20 +235,27 @@ public class PlayingModel extends Observable {
             res = p.move(board.getPotentialMinimumX(), board.getPotentialMinimumY(),
                     board.getPotentialMaximumX(),board.getRealMaximumY(), 0);
         }
-        board.moveCard(res, p.chooseMovingCard(board));
+        Card toMove = p.chooseMovingCard(board);
+        while (!board.isCardMoveable(res,toMove)) {
+            toMove = p.chooseMovingCard(board);
+        }
+        board.moveCard(res, toMove);
     }
 
     public void move(Coord coord, Card c) {
         board.moveCard(coord, c);
+        ACTUAL_STATE = MOVING_STATE;
+        setChanged();
+        notifyObservers();
     }
 
-    public Coord play(VirtualPlayer p) {
+    public void play(VirtualPlayer p, Card toPlay) {
         Coord res = p.play(board.getPotentialMinimumX(), board.getPotentialMinimumY(), board.getPotentialMaximumX(),
                 board.getPotentialMaximumY());
         while (!board.isCardCorrectlyPlaced(res)) {
             res = p.play(board.getPotentialMinimumX(), board.getPotentialMinimumY(), board.getPotentialMaximumX(),
                     board.getPotentialMaximumY());
         }
-        return res;
+        board.placeCard(res,toPlay);
     }
 }

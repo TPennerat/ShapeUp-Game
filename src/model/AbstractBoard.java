@@ -130,6 +130,14 @@ public abstract class AbstractBoard {
     public abstract int getPotentialMaximumY();
 
     public void moveCard(Coord nouvelleCoord, Card aDeplacer) {
+        Coord ancienneCoord = null;
+        for (Coord c:
+        placedCards.keySet()) {
+            if (placedCards.get(c).equals(aDeplacer)) {
+                ancienneCoord = c;
+            }
+        }
+        placedCards.remove(ancienneCoord);
         placeCard(nouvelleCoord, aDeplacer);
     }
 
@@ -142,4 +150,6 @@ public abstract class AbstractBoard {
     public void accept(InterfaceVisitor iv, Player p) {
         p.setScore(iv.visitBoard(this, p.getVictoryCard()));
     }
+
+    public abstract boolean isCardMoveable(Coord coord, Card card);
 }

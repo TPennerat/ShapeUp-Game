@@ -82,4 +82,9 @@ public class TriangleBoard extends AbstractBoard {
             return getRealMaximumY();
         return getRealMaximumY() + 1;
     }
+
+    @Override
+    public boolean isCardMoveable(Coord coord, Card card) {
+        return false;
+    }
 }

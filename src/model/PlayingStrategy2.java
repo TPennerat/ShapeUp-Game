@@ -5,12 +5,6 @@ import java.util.Random;
 
 public class PlayingStrategy2 implements PlayingStrategy {
 
-    private final Random random;
-
-    public PlayingStrategy2() {
-        random = new Random();
-    }
-
     @Override
     public Coord play(int minX, int minY, int maxX, int maxY) {
         return null;

@@ -40,4 +40,9 @@ public class CircleBoard extends AbstractBoard {
     public int getPotentialMaximumY() {
         return 0;
     }
+
+    @Override
+    public boolean isCardMoveable(Coord coord, Card card) {
+        return false;
+    }
 }

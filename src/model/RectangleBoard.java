@@ -79,22 +79,30 @@ public class RectangleBoard extends AbstractBoard {
             int newCoordY = coord.getPosY()+Math.abs(getRealMinimumY());
             newCords.put(coord, new Coord(newCoordX,newCoordY));
         }
-        int xMappedCoord = Math.abs(getRealMinimumX()) + Math.abs(getRealMaximumX())+1;
-        int yMappedCoord = Math.abs(getRealMinimumY()) + Math.abs(getRealMaximumY())+1;
+        int xMappedCoord = Math.abs(getRealMinimumX()) + Math.abs(getRealMaximumX()) + 1;
+        int yMappedCoord = Math.abs(getRealMinimumY()) + Math.abs(getRealMaximumY()) + 1;
         JPanel board = new JPanel(new GridLayout(yMappedCoord, xMappedCoord));
-        for (Coord c :
-                l) {
-            Card card = getPlacedCards().get(c);
-            BufferedImage img = card.getImg();
-            JLabel newCard = new JLabel(new ImageIcon(img.getScaledInstance(img.getWidth() / 8,
-                    img.getHeight() / 8, Image.SCALE_SMOOTH)));
-            newCard.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    sug.selectBoardCard(newCard, card);
+        for (int i=getRealMinimumY(); i<=getRealMaximumY(); i++) {
+            for (int j=getRealMinimumX(); j<=getRealMaximumX(); j++) {
+                Coord coord = new Coord(j,i);
+                Card c = placedCards.get(coord);
+                if (c == null) {
+                    JPanel jp = new JPanel();
+                    jp.setBorder(BorderFactory.createLineBorder(Color.gray, 2));
+                    board.add(jp);
+                } else {
+                    BufferedImage img = c.getImg();
+                    JLabel newCard = new JLabel(new ImageIcon(img.getScaledInstance(img.getWidth() / (8+Math.abs(getRealMaximumX())),
+                            img.getHeight() / (8+Math.abs(getRealMaximumY())), Image.SCALE_SMOOTH)));
+                    newCard.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mousePressed(MouseEvent e) {
+                            sug.selectBoardCard(newCard, c);
+                        }
+                    });
+                    board.add(newCard, newCords.get(coord).getPosX(), newCords.get(coord).getPosY());
                 }
-            });
-            board.add(newCard, newCords.get(c).getPosY(),newCords.get(c).getPosX());
+            }
         }
         return board;
     }
@@ -127,4 +135,23 @@ public class RectangleBoard extends AbstractBoard {
         return getRealMaximumY() + 1;
     }
 
+    @Override
+    public boolean isCardMoveable(Coord coord, Card card) {
+        Map<Coord, Card> clo = placedCards;
+        Coord ancienneCoord = null;
+        for (Coord c:
+                clo.keySet()) {
+            if (clo.get(c).equals(card)) {
+                ancienneCoord = c;
+            }
+        }
+        clo.remove(ancienneCoord);
+        if (isCardCorrectlyPlaced(coord)) {
+            clo.put(coord, card);
+            return true;
+        } else {
+            clo.put(ancienneCoord, card);
+            return false;
+        }
+    }
 }

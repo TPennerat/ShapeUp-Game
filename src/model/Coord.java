@@ -95,9 +95,9 @@ public class Coord implements Comparable{
         int soustracX =  x - this.posX;
         int soustracY =  y - this.posY;
         if (soustracY >= 1) {
-            return 1;
-        } else if (soustracY <= -1) {
             return -1;
+        } else if (soustracY <= -1) {
+            return 1;
         } else {
             if (soustracX >= 1) {
                 return -1;

@@ -37,29 +37,25 @@ public class VirtualPlayer extends Player {
         return playingStrategy.chooseMovingCard(board);
     }
 
-    public Coord autoPlay(int playingMode, AbstractBoard board, PlayingModel pm, Card card) {
-        Coord res = null;
+    public void autoPlay(int playingMode, AbstractBoard board, PlayingModel pm, Card card) {
         if (playingMode == PlayingModel.NORMAL_MODE) {
             if (pm.isFirstTurn()) {
-                if (pm.isFirstTurn()) {
-                    pm.setIsFirstTurn(false);
-                }
-                pm.getBoard().placeCard(pm.play(this), card);
+                pm.setIsFirstTurn(false);
+                pm.play(this, card);
             } else {
                 int choice = askChoice();
                 if (choice == 1) {
-                    pm.board.placeCard(pm.play(this), card);
+                    pm.play(this, card);
                     if (askMoveChoice() == 1) {
                         pm.move(this);
                     }
                 } else {
                     pm.move(this);
-                    pm.board.placeCard(pm.play(this), card);
+                    pm.play(this, card);
                 }
             }
         } else {
             // TODO ADVANCED MODE
         }
-        return res;
     }
 }

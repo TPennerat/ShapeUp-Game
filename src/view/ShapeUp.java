@@ -7,6 +7,22 @@ import java.util.*;
 
 public class ShapeUp implements Observer {
 
+    public PlayingModel getPm() {
+        return pm;
+    }
+
+    public void setPm(PlayingModel pm) {
+        this.pm = pm;
+    }
+
+    public GameController getGc() {
+        return gc;
+    }
+
+    public void setGc(GameController gc) {
+        this.gc = gc;
+    }
+
     protected PlayingModel pm;
     protected GameController gc;
 
@@ -15,15 +31,22 @@ public class ShapeUp implements Observer {
         this.gc = gc;
     }
 
-    public void launcher() {
+    public static void launcher(PlayingModel pm, GameController gc) {
+        ShapeUp game = new ShapeUp(pm,gc);
+        pm.addObserver(game);
         System.out.println("Bienvenue dans ShapeUp !"); // salutation du joueur
         System.out.println("Préparation du paquet de cartes...");
         System.out.println("Paquet de cartes prêt.");
         List<Player> players = askPlayersInfo();
         AbstractBoard board = askBoardInfo();
-        ShapeUp game = askAdvancedShapeUp(pm, gc);
-        // start game ?
+        game = askAdvancedShapeUp(pm, gc);
+        if (game instanceof AdvancedShapeUp) {
+            pm.setVariables(players, board, PlayingModel.ADVANCED_MODE);
+        } else {
+            pm.setVariables(players, board, PlayingModel.NORMAL_MODE);
+        }
     }
+
 
     private static ShapeUp askAdvancedShapeUp(PlayingModel pm, GameController gc) {
         String messageVersion = "A quel version de ShapeUp! souhaitez-vous jouer ? (1 : normal; 2 : advanced)";
@@ -33,38 +56,31 @@ public class ShapeUp implements Observer {
             nbVersion = askNumber(messageVersion);
         }
         if (nbVersion == 1) {
-            return  new ShapeUp(pm,gc);
+            return new ShapeUp(pm,gc);
         } else {
             return new AdvancedShapeUp(pm,gc);
         }
     }
 
-
-
-
-
-
-    protected void startRound() {
-        for (Player p :
-                pm.getPlayerList()) {
-            if (!pm.isGameFinished()) {
-                System.out.println("\nA vous de jouer " + p.getPseudo());
-                Card card = pm.getDeck().remove();
-                System.out.println("Carte à placer :");
-                System.out.println(card.toASCIIArt());
-                startPlayerTurn(p, card);
-                System.out.println("\nPlateau de jeu :\n");
-                pm.getBoard().showConsoleBoard();
-                System.out.print('\n');
+    protected void startTurn() {
+        RealPlayer p = (RealPlayer) pm.getPlayerList().get(pm.getCurrentPlayerIndex());
+        System.out.println("\nA vous de jouer " + p.getPseudo());
+        System.out.println("Carte à placer :");
+        Card c = p.getHand().get(0);
+        System.out.println(c.toASCIIArt());
+        if (pm.isFirstTurn()) {
+            playTurn(p, c);
+        } else {
+            int choice = p.askChoice();
+            if (choice == 1) {
+                playTurn(p,c);
+            } else {
+                moveTurn(p);
             }
-        }
-        if (pm.isGameFinished()) {
-            System.out.println("\nPlateau de jeu :\n");
-            pm.getBoard().showConsoleBoard();
         }
     }
 
-    protected Coord play(Player p) {
+    protected Coord play(RealPlayer p) {
         return p.play(pm.getBoard().getPotentialMinimumX(), pm.getBoard().getPotentialMinimumY(), pm.getBoard().getPotentialMaximumX(),
                 pm.getBoard().getPotentialMaximumY());
     }
@@ -81,36 +97,7 @@ public class ShapeUp implements Observer {
         }
     }
 
-    protected void startPlayerTurn(Player p, Card card) {
-        Coord c;
-        if (pm.isFirstRound()) {
-            c = play(p);
-            if (pm.isFirstTurn()) {
-                pm.setIsFirstTurn(false);
-            } else {
-                while (pm.getBoard().isCardCorrectlyPlaced(c)) {
-                    System.err.println("Carte mal placée.");
-                    c = play(p);
-                }
-            }
-            pm.getBoard().placeCard(c, card);
-        } else {
-            int res = p.askChoice();
-            if (res == 1) {
-                playTurn(p, card);
-                if (p.askMoveChoice() == 1) {
-                    moveTurn(p);
-                }
-            } else {
-                moveTurn(p);
-                System.out.println("Placer maintenant la carte :");
-                System.out.println(card.toASCIIArt());
-                playTurn(p, card);
-            }
-        }
-    }
-
-    protected void moveTurn(Player p) {
+    protected void moveTurn(RealPlayer p) {
         Coord c = move(p, Player.CARD_CHOSING);
         while (!pm.getBoard().isCoordAlreadyExisting(c)) {
             System.err.println("Aucune carte ici.");
@@ -122,16 +109,16 @@ public class ShapeUp implements Observer {
             System.err.println("Carte implacable ici.");
             c = move(p, Player.CARD_DEPLACEMENT);
         }
-        pm.getBoard().placeCard(c, aPlacer);
+        gc.move(c, aPlacer);
     }
 
-    protected void playTurn(Player p, Card card) {
+    protected void playTurn(RealPlayer p, Card card) {
         Coord c = play(p);
-        while (pm.getBoard().isCardCorrectlyPlaced(c)) {
+        while (!pm.getBoard().isCardCorrectlyPlaced(c)) {
             System.err.println("Carte mal placée.");
             c = play(p);
         }
-        pm.getBoard().placeCard(c, card);
+        gc.play(c, card);
     }
 
     private static AbstractBoard askBoardInfo() {
@@ -229,6 +216,37 @@ public class ShapeUp implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-
+        RealPlayer rp;
+        switch (pm.getActualState()) {
+            case PlayingModel.WAITING_STATE:
+                startTurn();
+                break;
+            case PlayingModel.PLAYING_STATE:
+                rp = (RealPlayer) pm.getPlayerList().get(pm.getCurrentPlayerIndex());
+                if (pm.isFirstTurn()) {
+                    gc.nextPlayer();
+                } else {
+                    int moveChoice = rp.askMoveChoice();
+                    if (moveChoice == 1) {
+                        moveTurn(rp);
+                    }
+                    gc.nextPlayer();
+                }
+                break;
+            case PlayingModel.MOVING_STATE:
+                rp = (RealPlayer) pm.getPlayerList().get(pm.getCurrentPlayerIndex());
+                playTurn(rp, rp.getHand().get(0));
+                break;
+            case PlayingModel.SETTING_STATE:
+                break;
+            case PlayingModel.FINISHED_STATE:
+                pm.calculeAndShowScore();
+                break;
+            default:
+                break;
+        }
+        System.out.println("\nPlateau de jeu :\n");
+        pm.getBoard().showConsoleBoard();
+        System.out.print('\n');
     }
 }

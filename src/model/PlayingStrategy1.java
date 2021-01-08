@@ -1,19 +1,13 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class PlayingStrategy1 implements PlayingStrategy {
 
-	private final Random random;
-
-	public PlayingStrategy1() {
-		random = new Random();
-	}
 	@Override
 	public Coord play(int minX, int minY, int maxX, int maxY) {
-		int randomX = minX + (random.nextInt() * ((maxX - minX) + 1));
-		int randomY = minY + (random.nextInt() * ((maxY - minY) + 1));
+		int randomX = minX + (int)(Math.random() * ((maxX - minX) + 1));
+		int randomY = minY + (int)(Math.random() * ((maxY - minY) + 1));
 		
         return new Coord(randomX,randomY);
     }
